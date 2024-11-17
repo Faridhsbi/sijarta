@@ -5,7 +5,7 @@ from .models import *
 class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['nama', 'username', 'jenis_kelamin', 'no_hp', 'tgl_lahir', 'alamat', 'password1', 'password2']
+        fields = [ 'username', 'nama', 'jenis_kelamin', 'no_hp', 'tgl_lahir', 'alamat', 'password1', 'password2']
         widgets = {
             'jenis_kelamin': forms.Select(choices=[
                 ('', 'Pilih Jenis Kelamin'),  # Placeholder

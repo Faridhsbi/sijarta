@@ -49,9 +49,9 @@ def choose_role(request):
     if request.method == 'GET':
         role = request.GET.get('role')  # Mendapatkan pilihan role dari GET
         if role == 'Pengguna':
-            return redirect('kuning:register_pengguna')
+            return redirect('authentication:register_pengguna')
         elif role == 'Pekerja':
-            return redirect('kuning:register_pekerja')
+            return redirect('authentication:register_pekerja')
     return render(request, 'choose_role.html')
 
 def register_pengguna(request):
@@ -66,7 +66,7 @@ def register_pengguna(request):
             user.role = "pengguna"  # Set role di User
             user.save()
 
-            return redirect('kuning:login')
+            return redirect('authentication:login')
         else:
             print(form.errors)  # Redirect ke halaman login setelah registrasi
     else:
@@ -96,7 +96,7 @@ def register_pekerja(request):
             pekerja.id = user  # Hubungkan Pekerja dengan User
             pekerja.save()
 
-            return redirect('kuning:login')
+            return redirect('authentication:login')
     else:
         # print('aaaaaa')
         user_form = UserRegisterForm()

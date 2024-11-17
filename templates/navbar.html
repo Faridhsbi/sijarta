@@ -5,9 +5,28 @@
             <div class="flex items-center">
                 <h1 class="text-2xl font-bold text-center text-white">SIJARTA</h1>
             </div>
-
-            <!-- Menu Navigation -->
             <div class="hidden md:flex items-center space-x-4">
+
+            <!-- Edit buat SS yg bawah comment aja nnt
+                <span class="text-gray-300 mr-4">Pengguna, <b>{{ user.username }}</b></span>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Homepage</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">MyPay</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Kelola Pesanan Saya</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Diskon</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Profile</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Logout</a>
+            -->
+            <!--
+                <span class="text-gray-300 mr-4">Pekerja, <b>{{ user.username }}</b></span>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Homepage</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Kelola Pekerjaan Saya</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Kelola Status Pekerjaan</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">MyPay</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Profile</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Profile</a>
+                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Logout</a>
+
+            -->
                 {% if user.is_authenticated %}
                     {% if user.role == 'Pengguna' %}
                         <span class="text-gray-300 mr-4">Welcome Pengguna, <b>{{ user.username }}</b></span>
@@ -28,10 +47,10 @@
                         <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Logout</a>
                     {% endif %}
                 {% else %}
-                    <a href="" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2">
+                    <a href="{% url 'authentication:login' %}" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2">
                         Login
                     </a>
-                    <a href="" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    <a href="{% url 'authentication:choose_role' %}" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
                         Register
                     </a>
                 {% endif %}

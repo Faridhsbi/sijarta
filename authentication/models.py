@@ -1,10 +1,11 @@
 from django.db import models
 import uuid
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
+class User(AbstractUser):
     # Menggunakan UUID sebagai primary key
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length=255)
+    username = models.CharField(max_length=255 , unique=True)
     nama = models.CharField(max_length=255)
     jenis_kelamin = models.CharField(max_length=1, choices=[('L', 'Laki-laki'), ('P', 'Perempuan')], default='L')
     no_hp = models.CharField(max_length=15, unique=True)
@@ -14,6 +15,7 @@ class User(models.Model):
     saldo_my_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     role = models.CharField(max_length=10, choices=[('pengguna', 'Pengguna'), ('pekerja', 'Pekerja')])
 
+    # USERNAME_FIELD = 'nama'  # Harus ada
     def __str__(self):
         return self.nama
 

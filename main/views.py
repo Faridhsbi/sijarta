@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 # # Create your views here.
 
-@login_required(login_url='/auth/login')
+@login_required(login_url='/auth')
 def show_main(request):
     context = {"user": request.user}   
     return render(request, "main.html", context)

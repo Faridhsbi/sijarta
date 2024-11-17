@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mx-auto px-96 py-8 my-20">
+    <h1 class="text-3xl font-bold mb-6">Edit Profil Pengguna</h1>
+    <form method="POST" class="bg-white shadow-md rounded-lg p-6">
+        {% csrf_token %}  <!-- Uncomment this line to enable CSRF protection -->
+        
+        <div class="mb-4">
+            <label for="nama" class="block text-gray-700 font-semibold mb-2">Nama:</label>
+            <input type="text" name="nama" value="{{ nama }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="jenis_kelamin" class="block text-gray-700 font-semibold mb-2">Jenis Kelamin:</label>
+            <select name="jenis_kelamin" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="L" {% if jenis_kelamin == 'L' %}selected{% endif %}>Laki-laki</option>
+                <option value="P" {% if jenis_kelamin == 'P' %}selected{% endif %}>Perempuan</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="no_hp" class="block text-gray-700 font-semibold mb-2">No. HP:</label>
+            <input type="text" name="no_hp" value="{{ no_hp }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="tgl_lahir" class="block text-gray-700 font-semibold mb-2">Tanggal Lahir:</label>
+            <input type="date" name="tgl_lahir" value="{{ tgl_lahir }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="alamat" class="block text-gray-700 font-semibold mb-2">Alamat:</label>
+            <input type="text" name="alamat" value="{{ alamat }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Simpan</button>
+    </form>
+</div>
+{% endblock %}

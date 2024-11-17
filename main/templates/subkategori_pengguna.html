@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subkategori Jasa - Pengguna</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 36px;
+        }
+
+        h2 {
+            margin-top: 20px;
+            font-size: 28px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .details, .services, .workers, .testimonials {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .service-item, .worker-item, .testimonial-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            overflow: auto; /* Memastikan modal bisa scroll jika konten terlalu panjang */
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%; /* Pastikan ukuran sesuai */
+            max-height: 80vh; /* Modal maksimal 80% dari tinggi layar */
+            overflow-y: auto; /* Aktifkan scrolling untuk konten berlebih */
+            box-sizing: border-box; /* Hitung padding dalam lebar */
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+        }
+        
+        .close:hover {
+            color: #333;
+        }        
+
+        .modal label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .modal input, .modal select, .modal button {
+            display: block;
+            width: 98%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cleaning Service</h1>
+    <div class="container">
+        <div class="details">
+            <p><strong>Deskripsi:</strong> Layanan kebersihan rumah dan kantor.</p>
+            <p><strong>Kategori:</strong> Jasa Rumah Tangga</p>
+        </div>
+        
+        <div class="services">
+            <h2>Daftar Sesi Layanan</h2>
+            <div class="service-item">
+                <span>Layanan Pembersihan - Rp 100.000</span>
+                <button onclick="openModal('Layanan Pembersihan', '100000')">Pesan Jasa</button>
+            </div>
+            <div class="service-item">
+                <span>Pembersihan Mendalam - Rp 200.000</span>
+                <button onclick="openModal('Pembersihan Mendalam', '200000')">Pesan Jasa</button>
+            </div>
+        </div>
+
+        <div class="workers">
+            <h2>Daftar Pekerja</h2>
+            <div class="worker-item">
+                <span>Nama Pekerja: Budi</span>
+            </div>
+            <div class="worker-item">
+                <span>Nama Pekerja: Siti</span>
+            </div>
+        </div>
+        
+        <div class="testimonials">
+            <h2>Testimoni</h2>
+            <div class="testimonial-item">
+                <p><strong>Pengguna:</strong> Andi</p>
+                <p><strong>Tanggal:</strong> 2024-11-01</p>
+                <p><strong>Pekerja:</strong> Budi</p>
+                <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
+                <p>"Layanan sangat memuaskan!"</p>
+            </div>
+            <div class="testimonial-item">
+                <p><strong>Pengguna:</strong> Rina</p>
+                <p><strong>Tanggal:</strong> 2024-11-02</p>
+                <p><strong>Pekerja:</strong> Siti</p>
+                <p><strong>Rating:</strong> ⭐⭐⭐⭐</p>
+                <p>"Hasil bersih dan pekerjanya ramah."</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Pemesanan Jasa</h2>
+            <form>
+                <label for="serviceName">Nama Layanan</label>
+                <input id="serviceName" type="text" readonly>
+                
+                <label for="servicePrice">Harga</label>
+                <input id="servicePrice" type="text" readonly>
+                
+                <label for="orderDate">Tanggal Pemesanan</label>
+                <input id="orderDate" type="date" required>
+                
+                <label for="discountCode">Kode Diskon</label>
+                <input id="discountCode" type="text" placeholder="Masukkan kode diskon (opsional)">
+                
+                <label for="paymentMethod">Metode Pembayaran</label>
+                <select id="paymentMethod" required>
+                    <option value="">Pilih metode pembayaran</option>
+                    <option value="mypay">MyPay</option>
+                    <option value="transfer">Transfer Bank</option>
+                </select>
+                
+                <button type="submit">Konfirmasi Pemesanan</button>
+            </form>
+        </div>
+    </div>
+    
+
+    <script>
+        function openModal(serviceName, servicePrice) {
+            document.getElementById('serviceName').value = serviceName;
+            document.getElementById('servicePrice').value = `Rp ${servicePrice}`;
+            document.getElementById('orderModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -5,14 +5,14 @@ from .models import *
 class UserRegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = [ 'username', 'nama', 'jenis_kelamin', 'no_hp', 'tgl_lahir', 'alamat', 'password1', 'password2']
+        fields = ['nama', 'password1', 'password2','jenis_kelamin', 'no_hp', 'tgl_lahir', 'alamat']
         widgets = {
             'jenis_kelamin': forms.Select(choices=[
                 ('', 'Pilih Jenis Kelamin'),  # Placeholder
                 ('L', 'Laki-laki'),
                 ('P', 'Perempuan')
             ]),
-            'password': forms.PasswordInput(),
+            # 'password': forms.PasswordInput(),
             'tgl_lahir': forms.DateInput(attrs={'type': 'date'}),
         }
 

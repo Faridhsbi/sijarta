@@ -6,4 +6,4 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='/auth')
 def show_main(request):
     context = {"user": request.user}   
-    return render(request, "main.html", context)
+    return render(request, "homepage.html", context)

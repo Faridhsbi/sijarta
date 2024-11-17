@@ -12,7 +12,7 @@ def show_profile_pengguna(request):
         'tgl_lahir' : "01-10-2005",
         'alamat' : "jakarta",
         'saldo_mypay'  : 200000,
-        'link_foto' : "https://static.promediateknologi.id/crop/0x0:0x0/x/photo/p2/140/2024/01/20/20240120_021347-3897237833.jpg"
+        'link_foto' : "https://st2.depositphotos.com/4211323/8820/v/950/depositphotos_88205990-stock-illustration-stop-tyrannosaurus-red-is-dangerous.jpg"
     }
     return render(request, 'profile_pengguna.html', context)
 
@@ -24,7 +24,7 @@ def show_profile_pekerja(request):
         'tgl_lahir' : "01-10-2005",
         'alamat' : "jakarta",
         'saldo_mypay'  : 200000,
-        'link_foto' : "https://static.promediateknologi.id/crop/0x0:0x0/x/photo/p2/140/2024/01/20/20240120_021347-3897237833.jpg",
+        'link_foto' : "https://static.promediateknologi.id/crop/0x0:0x0/x/photo/p2/140/2024/01/20/20240120_021207-662695297.jpg",
         'nama_bank' : "OVO",
         'no_rekening' : "123456789",
         "npwp" : "98776431",
@@ -42,6 +42,8 @@ def show_edit_pengguna(request):
         'no_hp' : "0857111",
         'tgl_lahir' : "01-10-2005",
         'alamat' : "jakarta",
+        'link_foto' : "https://st2.depositphotos.com/4211323/8820/v/950/depositphotos_88205990-stock-illustration-stop-tyrannosaurus-red-is-dangerous.jpg"
+
         # 'saldo_mypay'  : 200000,
     }
     return render(request, 'edit_profile_pengguna.html', context)
@@ -57,6 +59,8 @@ def show_edit_pekerja(request):
         'nama_bank' : "OVO",
         'no_rekening' : "123456789",
         "npwp" : "98776431",
+        'link_foto' : "https://static.promediateknologi.id/crop/0x0:0x0/x/photo/p2/140/2024/01/20/20240120_021207-662695297.jpg",
+
         # "rating" : 4.0,
         # "jml_pesanan_selesai" : 5,
         # "kategori1" : "Cuci Dapur",

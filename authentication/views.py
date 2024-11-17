@@ -31,23 +31,43 @@ def landing_page(request):
 #             print("Invalid credentials")
 #     return render(request, 'login.html')
 
-def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            response = HttpResponseRedirect("/")
-            response.set_cookie("user_logged_in", str(datetime.datetime.now()))
-            return response
-    else:
-        form = AuthenticationForm(request)
-    return render(request, "login.html", {"form": form})
 
-# View untuk halaman memilih role
+class EmailOrPhoneBackend:
+    def authenticate(self, request, username=None, password=None):
+        try:
+            # Coba cari user berdasarkan no_hp
+            user = User.objects.get(no_hp=username)
+            if user.check_password(password):
+                return user
+        except User.DoesNotExist:
+            return None
+    
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None
+
+def login_view(request):
+    if request.method == 'POST':
+        no_hp = request.POST.get('no_hp')
+        password = request.POST.get('password')
+
+        # Gunakan no_hp sebagai username untuk autentikasi
+        user = authenticate(request, username=no_hp, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login berhasil! Selamat datang kembali.")
+            return redirect("main:show_main")
+        else:
+            messages.error(request, "Nomor HP atau password salah. Silakan coba lagi.")
+    
+    return render(request, 'login.html')
+
 def choose_role(request):
     if request.method == 'GET':
-        role = request.GET.get('role')  # Mendapatkan pilihan role dari GET
+        role = request.GET.get('role')
         if role == 'Pengguna':
             return redirect('authentication:register_pengguna')
         elif role == 'Pekerja':
@@ -55,58 +75,61 @@ def choose_role(request):
     return render(request, 'choose_role.html')
 
 def register_pengguna(request):
-    print(request.method)
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-        # print(request.POST) 
         if form.is_valid():
-            # Simpan data User dengan role sebagai "pengguna"
             user = form.save(commit=False)
-            user.password = make_password("password_baru")
-            user.role = "pengguna"  # Set role di User
+            user.username = user.no_hp  # Set username sama dengan no_hp
+            user.role = "pengguna"
             user.save()
-
+            
+            # Buat objek Pengguna
+            pengguna = Pengguna(id=user, level="Bronze")  # Set level default
+            pengguna.save()
+            
+            messages.success(request, 'Registrasi berhasil! Silakan login.')
             return redirect('authentication:login')
         else:
-            print(form.errors)  # Redirect ke halaman login setelah registrasi
+            messages.error(request, 'Terjadi kesalahan dalam registrasi.')
     else:
         form = UserRegisterForm()
 
     return render(request, 'user_register.html', {'form': form})
 
 def register_pekerja(request):
-    # print("ppppppppppppppp")
-    # print(request.method)
     if request.method == 'POST':
         user_form = UserRegisterForm(request.POST)
         pekerja_form = WorkerRegisterForm(request.POST)
 
-        print("User Form Valid: ", user_form.is_valid())  # Cek validitas form user
-        print("Pekerja Form Valid: ", pekerja_form.is_valid())  # Cek validitas form pekerja
-        
         if user_form.is_valid() and pekerja_form.is_valid():
-            # Simpan data User dengan role sebagai "Pekerja"
+            # Simpan User
             user = user_form.save(commit=False)
-            user.password = make_password("password_baru")
-            user.role = "pekerja"  # Set role di User
+            user.username = user.no_hp  # Set username sama dengan no_hp
+            user.role = "pekerja"
             user.save()
 
-            # Buat Pekerja yang terkait dengan User yang baru dibuat
+            # Simpan Pekerja
             pekerja = pekerja_form.save(commit=False)
-            pekerja.id = user  # Hubungkan Pekerja dengan User
+            pekerja.id = user
             pekerja.save()
 
+            messages.success(request, 'Registrasi pekerja berhasil! Silakan login.')
             return redirect('authentication:login')
+        else:
+            messages.error(request, 'Terjadi kesalahan dalam registrasi.')
     else:
-        # print('aaaaaa')
         user_form = UserRegisterForm()
         pekerja_form = WorkerRegisterForm()
-    context = {'user_form': user_form, 'pekerja_form' : pekerja_form}
+
+    context = {
+        'user_form': user_form,
+        'pekerja_form': pekerja_form
+    }
     return render(request, 'worker_register.html', context)
 
 
 
 def logout_view(request):
     logout(request)
-    return redirect('homepage')
+    return redirect('authentication:login')
 

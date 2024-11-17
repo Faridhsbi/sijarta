@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mx-auto p-4 mt-16">
+    <div class="bg-white shadow-md rounded-lg p-6 max-w-lg mx-auto">
+        <h1 class="text-3xl font-bold mb-6 text-center">Transaksi MyPay</h1>
+        <div class="mb-4">
+            <p class="text-lg font-semibold">Nama: {{ nama }}</p>
+            <p class="text-lg font-semibold">Tanggal Transaksi: {{ tanggal_transaksi }}</p>
+            <p class="text-lg font-semibold">Saldo MyPay: Rp {{ saldo_mypay }}</p>
+        </div>
+        <div class="mb-4">
+            <label for="kategori" class="block text-gray-700 font-semibold mb-2">Kategori Transaksi:</label>
+            <select id="kategori" name="kategori" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="updateForm()">
+                <option value="" disabled selected>Pilih Kategori</option>
+                <option value="TopUp MyPay">TopUp MyPay</option>
+                <option value="Membayar Pemesanan Jasa" {% if user.role == 'pekerja' %}style="display:none;"{% endif %}>Membayar Pemesanan Jasa</option>
+                <option value="Transfer MyPay">Transfer MyPay</option>
+                <option value="Withdrawal">Withdrawal</option>
+            </select>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <div id="form-content"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+// PLACEHOLDER SEBELUM PAKE SQL QUERY
+    function updateForm() {
+        const kategori = document.getElementById('kategori').value;
+        const formContent = document.getElementById('form-content');
+        formContent.innerHTML = '';
+
+        if (kategori === 'TopUp MyPay') {
+            formContent.innerHTML = `
+                <div class="mb-4">
+                    <label for="nominal" class="block text-gray-700 font-semibold mb-2">Nominal TopUp:</label>
+                    <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Top Up</button>
+
+            `;
+        } else if (kategori === 'Membayar Pemesanan Jasa') {
+            formContent.innerHTML = `
+                <div class="mb-4">
+                    <label for="jasa" class="block text-gray-700 font-semibold mb-2">Pilih Jasa:</label>
+                    <select name="jasa" id="jasa" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="" disabled selected>Pilih Jasa</option>
+                        <!-- tambah opsi jasa yang dipesan di sini -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="nominal" class="block text-gray-700 font-semibold mb-2">Nominal Pembayaran:</label>
+                    <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Bayar</button>
+
+            `;
+        } else if (kategori === 'Transfer MyPay') {
+            formContent.innerHTML = `
+                <div class="mb-4">
+                    <label for="no_hp_tujuan" class="block text-gray-700 font-semibold mb-2">No HP Tujuan:</label>
+                    <input type="text" name="no_hp_tujuan" id="no_hp_tujuan" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="nominal" class="block text-gray-700 font-semibold mb-2">Nominal Transfer:</label>
+                    <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Bayar</button>
+
+            `;
+        } else if (kategori === 'Withdrawal') {
+            formContent.innerHTML = `
+                <div class="mb-4">
+                    <label for="nama_bank" class="block text-gray-700 font-semibold mb-2">Nama Bank:</label>
+                    <select name="nama_bank" id="nama_bank" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="" disabled selected>Pilih Bank</option>
+                        <option value="BCA">BCA</option>
+                        <option value="BNI">BNI</option>
+                        <option value="Mandiri">Mandiri</option>
+                        <option value="BRI">BRI</option>
+                        <!-- tambah opsi lainnya -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="nomor_rekening" class="block text-gray-700 font-semibold mb-2">Nomor Rekening:</label>
+                    <input type="text" name="nomor_rekening" id="nomor_rekening" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="nominal" class="block text-gray-700 font-semibold mb-2">Nominal Withdrawal:</label>
+                    <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Bayar</button>
+            `;
+        }
+    }
+</script>
+{% endblock %}

@@ -2,7 +2,12 @@
 {% block content %}
 {% include 'navbar.html' %}
 <div class="container mx-auto px-96 py-8 my-20">
-    <h1 class="text-3xl font-bold mb-6">Profil Pekerja</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Profil Pekerja</h1>
+        <div class="w-48 h-48 rounded-full overflow-hidden border-2 border-gray-300">
+            <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
+        </div>
+    </div>
     <ul class="bg-white shadow-md rounded-lg p-6">
         <li class="mb-4"><strong class="text-gray-700">Nama:</strong> <span class="text-gray-900">{{ nama }}</span></li>
         <li class="mb-4"><strong class="text-gray-700">Jenis Kelamin:</strong> <span class="text-gray-900">{{ jenis_kelamin }}</span></li>

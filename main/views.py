@@ -7,12 +7,13 @@ import psycopg2
 @login_required(login_url='/auth')
 def show_main(request):
     context = {"user": request.user}   
-    return render(request, "main.html", context)
+    return render(request, "homepage.html", context)
 
 
-def create_schema(schema_name):
-    conn = psycopg2.connect("dbname=your_database user=your_username password=your_password")
-    cur = conn.cursor()
-    cur.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name}")
-    conn.commit()
-    conn.close()
+# def create_schema(schema_name):
+#     conn = psycopg2.connect("dbname=your_database user=your_username password=your_password")
+#     cur = conn.cursor()
+#     cur.execute(f"CREATE SCHEMA IF NOT EXISTS {schema_name}")
+#     conn.commit()
+#     conn.close()
+#     return render(request, "homepage.html", context)

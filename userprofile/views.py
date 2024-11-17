@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-# from .models import User
+from authentication.models import *
 
 
 def show_profile_pengguna(request):
@@ -72,10 +72,35 @@ def show_edit_pekerja(request):
 
 def profile_view(request):
     user = request.user
+    print(user.nama)  # Debug data pengguna
     if user.role == 'pengguna':
-        return render(request, 'profile_pengguna.html', {'user': user})
+        # Load relasi Pengguna
+        pengguna = Pengguna.objects.select_related('id').get(id=user)
+        context = {
+            'saldo_mypay' : 350000,
+            'user': user,
+            'pengguna': pengguna,
+            'level': pengguna.level
+        }
+        return render(request, 'profile_pengguna.html', context)
+        
     elif user.role == 'pekerja':
-        return render(request, 'profile_pekerja.html', {'user': user})
+        # Load relasi Pekerja
+        pekerja = Pekerja.objects.select_related('id').get(id=user)
+        context = {
+            'saldo_my_pay' : 2000000,
+            'user': user,
+            'pekerja': pekerja,
+            'nama_bank': pekerja.nama_bank,
+            'nomor_rekening': pekerja.nomor_rekening,
+            'npwp': pekerja.npwp,
+            'link_foto': pekerja.link_foto,
+            'rating': pekerja.rating + 3.5,
+            'jml_pesanan_selesai': pekerja.jml_pesanan_selesai + 2,
+            'kategori1' : "Deep Cleaning",
+            'kategori2' : "Home Cleaning",
+        }
+        return render(request, 'profile_pekerja.html', context)
     else:
         messages.error(request, "Role tidak dikenali.")
         return redirect('home')

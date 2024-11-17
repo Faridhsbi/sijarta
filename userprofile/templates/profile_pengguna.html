@@ -2,18 +2,16 @@
 {% block content %}
 {% include 'navbar.html' %}
 <div class="my-20 container mx-auto px-96 py-8">
-    <div class="flex justify-between items-center mb-6">
+     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Profil Pengguna</h1>
-        <div class="w-48 h-48 rounded-full overflow-hidden border-2 border-gray-300">
-            <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
-        </div>
-    </div>
+    </div> 
     <ul class="bg-white shadow-md rounded-lg p-6">
-        <li class="mb-4"><strong class="text-gray-700">Nama:</strong> <span class="text-gray-900">{{ nama }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Jenis Kelamin:</strong> <span class="text-gray-900">{{ jenis_kelamin }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">No. HP:</strong> <span class="text-gray-900">{{ no_hp }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Tanggal Lahir:</strong> <span class="text-gray-900">{{ tgl_lahir }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Alamat:</strong> <span class="text-gray-900">{{ alamat }}</span></li>
+        <li class="mb-4"><strong class="text-gray-700">Nama:</strong> <span class="text-gray-900">{{ user.nama }}</span></li>
+        <li class="mb-4"><strong class="text-gray-700">Level:</strong> <span class="text-gray-900">{{ level }}</span></li>
+        <li class="mb-4"><strong class="text-gray-700">Jenis Kelamin:</strong> <span class="text-gray-900">{{ user.get_jenis_kelamin_display }}</span></li>
+        <li class="mb-4"><strong class="text-gray-700">No. HP:</strong> <span class="text-gray-900">{{ user.no_hp }}</span></li>
+        <li class="mb-4"><strong class="text-gray-700">Tanggal Lahir:</strong> <span class="text-gray-900">{{ user.tgl_lahir }}</span></li>
+        <li class="mb-4"><strong class="text-gray-700">Alamat:</strong> <span class="text-gray-900">{{ user.alamat }}</span></li>
         <li class="mb-4"><strong class="text-gray-700">Saldo MyPay:</strong> <span class="text-gray-900">{{ saldo_mypay }}</span></li>
     </ul>
     <a href="{% url 'userprofile:show_edit_pengguna' %}" class="mt-6 inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Update Profil</a>

@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -122,6 +123,7 @@
         }
     </style>
 </head>
+<div class="my-20 container mx-auto px-96 py-8">
 <body>
     <h1>Cleaning Service</h1>
     <div class="container">
@@ -214,4 +216,5 @@
         }
     </script>
 </body>
-</html>
+</div>
+{% endblock %}

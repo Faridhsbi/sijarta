@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container mx-auto px-96 py-8 my-20">
+    <h1 class="text-3xl font-bold mb-6">Edit Profil Pekerja</h1>
+    <form method="POST" class="bg-white shadow-md rounded-lg p-6">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="nama" class="block text-gray-700 font-semibold mb-2">Nama:</label>
+            <input type="text" name="nama" value="{{ user.nama }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="jenis_kelamin" class="block text-gray-700 font-semibold mb-2">Jenis Kelamin:</label>
+            <select name="jenis_kelamin" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="L" {% if user.jenis_kelamin == 'L' %}selected{% endif %}>Laki-laki</option>
+                <option value="P" {% if user.jenis_kelamin == 'P' %}selected{% endif %}>Perempuan</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="no_hp" class="block text-gray-700 font-semibold mb-2">No. HP:</label>
+            <input type="text" name="no_hp" value="{{ user.no_hp }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="tgl_lahir" class="block text-gray-700 font-semibold mb-2">Tanggal Lahir:</label>
+            <input type="date" name="tgl_lahir" value="{{ user.tgl_lahir }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="alamat" class="block text-gray-700 font-semibold mb-2">Alamat:</label>
+            <input type="text" name="alamat" value="{{ user.alamat }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="nama_bank" class="block text-gray-700 font-semibold mb-2">Nama Bank:</label>
+            <select name="nama_bank" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="GoPay" {% if user.nama_bank == 'GoPay' %}selected{% endif %}>GoPay</option>
+                <option value="OVO" {% if user.nama_bank == 'OVO' %}selected{% endif %}>OVO</option>
+                <option value="VA_BCA" {% if user.nama_bank == 'VA_BCA' %}selected{% endif %}>Virtual Account BCA</option>
+                <option value="VA_BNI" {% if user.nama_bank == 'VA_BNI' %}selected{% endif %}>Virtual Account BNI</option>
+                <option value="VA_Mandiri" {% if user.nama_bank == 'VA_Mandiri' %}selected{% endif %}>Virtual Account Mandiri</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="nomor_rekening" class="block text-gray-700 font-semibold mb-2">Nomor Rekening:</label>
+            <input type="text" name="nomor_rekening" value="{{ user.nomor_rekening }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="npwp" class="block text-gray-700 font-semibold mb-2">NPWP:</label>
+            <input type="text" name="npwp" value="{{ user.npwp }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 ```html
+            focus:ring-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="link_foto" class="block text-gray-700 font-semibold mb-2">Link Foto:</label>
+            <input type="text" name="link_foto" value="{{ user.link_foto }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Simpan Perubahan</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>SIJARTA</title>
+{% endblock meta %}
+
+{% block content %}
+{% comment %} {% include 'navbar.html' %} {% endcomment %}
+<div class="page min-h-screen flex items-center justify-center w-screen py-12 px-4 sm:px-6 lg:px-8">
+  <div class="container max-w-xl w-full space-y-8 border shadow-lg p-10 mb-10 bg-gray-100" style="border-radius: 1rem;">
+    <h2 class="text-center text-black text-3xl font-extrabold text-gray-900"> SIJARTA By bukan cbkadal</h2>
+        <a href="{% url 'authentication:login' %}" class="button relative w-full bg-blue-800 hover:bg-blue-900 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2">
+            Login
+        </a>
+
+        <a href="{% url 'authentication:choose_role' %}" class="button relative w-full bg-blue-800 hover:bg-blue-900 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2">
+            Register
+        </a>
+  </div>
+</div>
+
+
+
+{% endblock %}

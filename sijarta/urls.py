@@ -25,5 +25,5 @@ urlpatterns = [
     path('discount/', include('diskon.urls')),
     path('testimoni/', include('testimoni.urls')), # buat test doang, nanti kalo udah ada view pesanan jasa apus aja
     path('auth/', include('authentication.urls')),
-    path('profile/', include('userprofile.urls'))
+    path('profile/', include('userprofile.urls')),
 ]

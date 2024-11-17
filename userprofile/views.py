@@ -120,5 +120,29 @@ def edit_profile_pekerja(request):
 
     return render(request, 'edit_profile_pekerja.html', {'user': user})
 
+def show_mypay(request): # PLACEHOLDER
+    user = request.user
+    transaksi1 = {'nominal': 15000, 'tanggal': '20-10-2024', 'kategori': 'Transfer MyPay'}
+    transaksi2 = {'nominal': -100000, 'tanggal': '16-11-2024', 'kategori': 'Pemesanan Jasa'}
+    transaksi3 = {'nominal': 15000, 'tanggal': '12-12-2024', 'kategori': 'TopUp MyPay'}
 
+    context = {
+        'no_hp' : '0857111',
+        'saldo_mypay' : 200000,
+        'transaksi1' : transaksi1,
+        'transaksi2' : transaksi2,
+        'transaksi3' : transaksi3,
+    }
 
+    return render(request, 'mypay.html', context)
+
+def new_transaction(request): # PLACEHOLDER 
+    user = request.user
+    context = {
+        'nama' : 'Budi',
+        'tanggal_transaksi' : '20-10-2024',
+        'saldo_mypay' : 200000,
+        'kategori': ['Membayar Pemesanan Jasa', 'TopUp MyPay', 'Transfer MyPay', 'Withdrawal']
+    }
+
+    return render(request, 'new_transaction.html', context)

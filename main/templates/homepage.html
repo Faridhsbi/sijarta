@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,6 +70,7 @@
         }
     </style>
 </head>
+<div class="my-20 container mx-auto px-96 py-8">
 <body>
     <h1>Homepage</h1>
     <div class="container">
@@ -90,11 +92,12 @@
         <div class="categories">
             <h2>Kategori Jasa</h2>
             <div class="category-list">
-                <a href="#">Subkategori Jasa 1</a>
-                <a href="#">Subkategori Jasa 2</a>
-                <a href="#">Subkategori Jasa 3</a>
+                <a href="{% url 'main:show_subkategori' %}">Subkategori Jasa 1</a>
+                <a href="{% url 'main:show_subkategori' %}">Subkategori Jasa 2</a>
+                <a href="{% url 'main:show_subkategori' %}">Subkategori Jasa 3</a>
             </div>
         </div>
     </div>
 </body>
-</html>
+</div>
+{% endblock %}

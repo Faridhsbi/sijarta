@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'main',
     'authentication',
     'userprofile',
+    'pekerjaan_app',
 ]
 
 MIDDLEWARE = [

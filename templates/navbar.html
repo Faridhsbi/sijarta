@@ -36,7 +36,7 @@
                 {% if user.is_authenticated %}
                     {% if user.role == 'pengguna' %}
                         <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Homepage</a>
-                        <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">MyPay</a>
+                        <a href="{% url 'userprofile:show_mypay' %}" class="snav text-white  px-3 py-2 rounded transition duration-300">MyPay</a>
                         <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Diskon</a>
                         <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Kelola Pesanan Saya</a>
                         <a href="{% url 'userprofile:show_pengguna' %}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300">Profile</a>
@@ -47,9 +47,9 @@
                         </div> {% endcomment %}
                     {% elif user.role == 'pekerja' %}
                         <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300 ">Homepage</a>
-                        <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Pekerjaan Saya</a>
-                        <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Status Pekerjaan</a>
-                        <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">MyPay</a>
+                        <a href="{% url 'pekerjaan_app:show_pekerjaan' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Pekerjaan Saya</a>
+                        <a href="{% url 'pekerjaan_app:show_status_pekerjaan' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Status Pekerjaan</a>
+                        <a href="{% url 'userprofile:show_mypay' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">MyPay</a>
                         <a href="{% url 'userprofile:show_pekerja' %}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300">Profile</a>
                         <a href="{% url 'authentication:logout' %}" class="text-white hover:bg-red-700 px-4 py-2 rounded transition duration-300 bg-red-500">Logout</a>
                         <span class="text-gray-300">Pekerja, <b>{{ user.nama }}</b></span>

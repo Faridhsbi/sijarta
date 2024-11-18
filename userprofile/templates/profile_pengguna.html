@@ -14,6 +14,6 @@
         <li class="mb-4"><strong class="text-gray-700">Alamat:</strong> <span class="text-gray-900">{{ user.alamat }}</span></li>
         <li class="mb-4"><strong class="text-gray-700">Saldo MyPay:</strong> <span class="text-gray-900">{{ saldo_mypay }}</span></li>
     </ul>
-    <a href="{% url 'userprofile:show_edit_pengguna' %}" class="mt-6 inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Update Profil</a>
+    <a href="{% url 'userprofile:edit_profile_pengguna' %}" class="mt-6 inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Update Profil</a>
 </div>
 {% endblock %}

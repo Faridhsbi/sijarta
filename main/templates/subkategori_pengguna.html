@@ -178,7 +178,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Pemesanan Jasa</h2>
-            <form>
+            <form onsubmit="redirectToOrders(); return false;">
                 <label for="serviceName">Nama Layanan</label>
                 <input id="serviceName" type="text" readonly>
                 
@@ -209,6 +209,10 @@
             document.getElementById('serviceName').value = serviceName;
             document.getElementById('servicePrice').value = `Rp ${servicePrice}`;
             document.getElementById('orderModal').style.display = 'block';
+        }
+
+        function redirectToOrders() {
+            window.location.href = "{% url 'main:show_pemesananjasa' %}";
         }
 
         function closeModal() {

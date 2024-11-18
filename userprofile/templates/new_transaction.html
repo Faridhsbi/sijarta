@@ -27,7 +27,8 @@
 </div>
 
 <script>
-// PLACEHOLDER SEBELUM PAKE SQL QUERY
+    const pekerjaanData = {{ jasa|safe }};
+
     function updateForm() {
         const kategori = document.getElementById('kategori').value;
         const formContent = document.getElementById('form-content');
@@ -40,23 +41,21 @@
                     <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Top Up</button>
-
             `;
         } else if (kategori === 'Membayar Pemesanan Jasa') {
+            let jasaOptions = pekerjaanData.map(pekerjaan => `<option value="${pekerjaan.id}" data-harga="${pekerjaan.total_biaya}">${pekerjaan.kategori} - ${pekerjaan.subkategori}</option>`).join('');
             formContent.innerHTML = `
                 <div class="mb-4">
                     <label for="jasa" class="block text-gray-700 font-semibold mb-2">Pilih Jasa:</label>
-                    <select name="jasa" id="jasa" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        <option value="" disabled selected>Pilih Jasa</option>
-                        <!-- tambah opsi jasa yang dipesan di sini -->
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="nominal" class="block text-gray-700 font-semibold mb-2">Nominal Pembayaran:</label>
-                    <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <div class="flex items-center">
+                        <select name="jasa" id="jasa" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="updateHarga()" required>
+                            <option value="" disabled selected>Pilih Jasa</option>
+                            ${jasaOptions}
+                        </select>
+                        <span id="harga" class="ml-4 text-gray-700 w-3/4 font-semibold"></span>
+                    </div>
                 </div>
                 <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Bayar</button>
-
             `;
         } else if (kategori === 'Transfer MyPay') {
             formContent.innerHTML = `
@@ -69,7 +68,6 @@
                     <input type="number" name="nominal" id="nominal" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
                 <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Bayar</button>
-
             `;
         } else if (kategori === 'Withdrawal') {
             formContent.innerHTML = `
@@ -81,7 +79,6 @@
                         <option value="BNI">BNI</option>
                         <option value="Mandiri">Mandiri</option>
                         <option value="BRI">BRI</option>
-                        <!-- tambah opsi lainnya -->
                     </select>
                 </div>
                 <div class="mb-4">
@@ -95,6 +92,13 @@
                 <button type="submit" class="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200 w-full">Bayar</button>
             `;
         }
+    }
+
+    function updateHarga() {
+        const jasaSelect = document.getElementById('jasa');
+        const selectedOption = jasaSelect.options[jasaSelect.selectedIndex];
+        const harga = selectedOption.getAttribute('data-harga');
+        document.getElementById('harga').textContent = `Rp ${harga}`;
     }
 </script>
 {% endblock %}

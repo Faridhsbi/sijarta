@@ -17,6 +17,12 @@ def show_subkategori(request):
     else :
         return render(request, "subkategori_pekerja.html", context)
 
+@login_required(login_url='/auth')
+def show_pemesananjasa(request):
+    context = {"user": request.user}   
+    if request.user.role == "pengguna" :
+        return render(request, "pemesanan_jasa.html", context)
+
 # def create_schema(schema_name):
 #     conn = psycopg2.connect("dbname=your_database user=your_username password=your_password")
 #     cur = conn.cursor()

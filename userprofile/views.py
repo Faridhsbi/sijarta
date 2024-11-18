@@ -163,11 +163,22 @@ def show_mypay(request): # PLACEHOLDER
 
 def new_transaction(request): # PLACEHOLDER 
     user = request.user
+    jasa1 = {'id': 1, 'kategori': 'Home Cleaning', 'subkategori': 'Setrika','total_biaya': 150000}
+    jasa2 = {'id': 2, 'kategori': 'Home Cleaning', 'subkategori': 'Setrika', 'total_biaya': 100000}
+    jasa3 = {'id': 3, 'kategori': 'Home Cleaning', 'subkategori': 'Daily Cleaning','total_biaya': 100}
+    jasa4 = {'id': 4, 'kategori': 'Home Cleaning', 'subkategori': 'Pembersihan Dapur', 'total_biaya': 125000}
+
+    jasa5 = {'id': 5, 'kategori': 'Massage', 'subkategori': 'Foot massage', 'total_biaya': 130250}
+    jasa6 = {'id': 6, 'kategori': 'Massage', 'subkategori': 'Foot massage', 'total_biaya': 500000}
+    jasa7 = {'id': 7, 'kategori': 'Massage', 'subkategori': 'Arm massage', 'total_biaya': 300000}
+
     context = {
         'nama' : 'Budi',
         'tanggal_transaksi' : '20-10-2024',
         'saldo_mypay' : 200000,
-        'kategori': ['Membayar Pemesanan Jasa', 'TopUp MyPay', 'Transfer MyPay', 'Withdrawal']
+        'kategori': ['Membayar Pemesanan Jasa', 'TopUp MyPay', 'Transfer MyPay', 'Withdrawal'],
+        'jasa' : [jasa1, jasa2, jasa3, jasa4, jasa5, jasa6, jasa7],
     }
-
+    # if request.method == 'POST':
+    # dll.. dari form
     return render(request, 'new_transaction.html', context)

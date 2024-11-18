@@ -1,225 +1,118 @@
 {% extends 'base.html' %}
-    {% block meta %}
+{% block meta %}
     <title>Diskon</title>
-    <style>
-        /* General reset and font styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
+{% endblock meta %}
 
-        h1, h2 {
-            text-align: center;
-            color: #333;
-        }
+{% block content %}
+{% include 'navbar.html' %}
+<br/><br/><br/><br/>
+<h1 class="text-4xl font-bold text-center text-blue-600 mt-8">DISKON</h1>
 
-        h1 {
-            margin-top: 20px;
-            font-size: 36px;
-        }
+<h2 class="text-2xl font-semibold text-center mt-8">VOUCHER</h2>
 
-        h2 {
-            margin-top: 20px;
-            font-size: 28px;
-        }
-
-        /* Table styles */
-        table {
-            width: 90%;
-            margin: 30px auto;
-            border-collapse: collapse;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px 20px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 18px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Button styles */
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            overflow: auto;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 8px;
-            width: 50%;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.4s;
-        }
-
-        .close {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #333;
-            text-decoration: none;
-        }
-
-        /* Success message */
-        .modal h2 {
-            color: #4CAF50;
-        }
-
-        /* Error message */
-        .modal h2.error {
-            color: #e74c3c;
-        }
-
-        /* Animation for fade-in modal */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
-    {% endblock meta %}
-
-
-    {% block content %}
-    {% include 'navbar.html' %}
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <h1>DISKON</h1>
-
-    <h2>VOUCHER</h2>
-    <table>
-        <tr>
-            <th>Kode</th>
-            <th>Potongan</th>
-            <th>Min Transaksi Pemesanan</th>
-            <th>Jumlah Hari Berlaku</th>
-            <th>Kuota Penggunaan</th>
-            <th>Harga</th>
-            <th>Aksi</th>
-        </tr>
-        <tr>
-            <td>DISC10</td>
-            <td>10%</td>
-            <td>Rp 100.000</td>
-            <td>30 Hari</td>
-            <td>5</td>
-            <td>Rp 10.000</td>
-            <td><button onclick="buyVoucher(15000, 10000)">Beli</button></td>
-        </tr>
-        <tr>
-            <td>DISC20</td>
-            <td>20%</td>
-            <td>Rp 200.000</td>
-            <td>15 Hari</td>
-            <td>3</td>
-            <td>Rp 20.000</td>
-            <td><button onclick="buyVoucher(15000, 20000)">Beli</button></td>
-        </tr>
+<!-- Voucher Table -->
+<div class="overflow-x-auto max-w-screen-lg mx-auto mt-6">
+    <table class="min-w-full table-auto bg-white border-collapse shadow-md">
+        <thead>
+            <tr class="bg-blue-600 text-white">
+                <th class="px-6 py-3 text-left">Kode</th>
+                <th class="px-6 py-3 text-left">Potongan</th>
+                <th class="px-6 py-3 text-left">Min Transaksi Pemesanan</th>
+                <th class="px-6 py-3 text-left">Jumlah Hari Berlaku</th>
+                <th class="px-6 py-3 text-left">Kuota Penggunaan</th>
+                <th class="px-6 py-3 text-left">Harga</th>
+                <th class="px-6 py-3 text-center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b hover:bg-blue-50">
+                <td class="px-6 py-4">DISC10</td>
+                <td class="px-6 py-4">10%</td>
+                <td class="px-6 py-4">Rp 100.000</td>
+                <td class="px-6 py-4">30 Hari</td>
+                <td class="px-6 py-4">5</td>
+                <td class="px-6 py-4">Rp 10.000</td>
+                <td class="px-6 py-4 text-center">
+                    <button onclick="buyVoucher(15000, 10000)" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Beli</button>
+                </td>
+            </tr>
+            <tr class="border-b hover:bg-blue-50">
+                <td class="px-6 py-4">DISC20</td>
+                <td class="px-6 py-4">20%</td>
+                <td class="px-6 py-4">Rp 200.000</td>
+                <td class="px-6 py-4">15 Hari</td>
+                <td class="px-6 py-4">3</td>
+                <td class="px-6 py-4">Rp 20.000</td>
+                <td class="px-6 py-4 text-center">
+                    <button onclick="buyVoucher(15000, 20000)" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Beli</button>
+                </td>
+            </tr>
+        </tbody>
     </table>
+</div>
 
-    <h2>PROMO</h2>
-    <table>
-        <tr>
-            <th>Kode</th>
-            <th>Tanggal Akhir Berlaku</th>
-        </tr>
-        <tr>
-            <td>PROMO50</td>
-            <td>2024-12-31</td>
-        </tr>
-        <tr>
-            <td>PROMO100</td>
-            <td>2024-11-30</td>
-        </tr>
+<h2 class="text-2xl font-semibold text-center mt-12">PROMO</h2>
+
+<!-- Promo Table -->
+<div class="overflow-x-auto max-w-screen-lg mx-auto mt-6">
+    <table class="min-w-full table-auto bg-white border-collapse shadow-md">
+        <thead>
+            <tr class="bg-blue-600 text-white">
+                <th class="px-6 py-3 text-left">Kode</th>
+                <th class="px-6 py-3 text-left">Tanggal Akhir Berlaku</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b hover:bg-blue-50">
+                <td class="px-6 py-4">PROMO50</td>
+                <td class="px-6 py-4">2024-12-31</td>
+            </tr>
+            <tr class="border-b hover:bg-blue-50">
+                <td class="px-6 py-4">PROMO100</td>
+                <td class="px-6 py-4">2024-11-30</td>
+            </tr>
+        </tbody>
     </table>
+</div>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('success-modal')">&times;</span>
-            <h2>SUKSES</h2>
-            <p>SELAMAT Anda berhasil membeli voucher kode XXX. Voucher ini akan berlaku hingga tanggal XX/XX/XXXX dengan kuota penggunaan sebanyak X kali.</p>
-            <button onclick="closeModal('success-modal')">Close</button>
-        </div>
+<!-- Success Modal -->
+<div id="success-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2">
+        <span class="absolute top-4 right-4 text-gray-500 text-2xl cursor-pointer" onclick="closeModal('success-modal')">&times;</span>
+        <h2 class="text-3xl text-green-500 text-center">SUKSES</h2>
+        <p class="text-center mt-4">SELAMAT Anda berhasil membeli voucher kode XXX. Voucher ini akan berlaku hingga tanggal XX/XX/XXXX dengan kuota penggunaan sebanyak X kali.</p>
+        <button class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" onclick="closeModal('success-modal')">Close</button>
     </div>
+</div>
 
-    <!-- Error Modal -->
-    <div id="error-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('error-modal')">&times;</span>
-            <h2 class="error">GAGAL</h2>
-            <p>Maaf, saldo Anda tidak cukup untuk membeli voucher ini.</p>
-            <button onclick="closeModal('error-modal')">Close</button>
-        </div>
+<!-- Error Modal -->
+<div id="error-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-1/2">
+        <span class="absolute top-4 right-4 text-gray-500 text-2xl cursor-pointer" onclick="closeModal('error-modal')">&times;</span>
+        <h2 class="text-3xl text-red-500 text-center">GAGAL</h2>
+        <p class="text-center mt-4">Maaf, saldo Anda tidak cukup untuk membeli voucher ini.</p>
+        <button class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" onclick="closeModal('error-modal')">Close</button>
     </div>
+</div>
 
-    <script>
-        // JavaScript to handle modals
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
-        }
+<script>
+    // JavaScript to handle modals
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "flex";
+    }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = "none";
-        }
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
 
-        // Simulating voucher purchase logic
-        function buyVoucher(userBalance, voucherPrice) {
-            if (userBalance >= voucherPrice) {
-                openModal('success-modal'); // Open success modal
-            } else {
-                openModal('error-modal'); // Open error modal
-            }
+    // Simulating voucher purchase logic
+    function buyVoucher(userBalance, voucherPrice) {
+        if (userBalance >= voucherPrice) {
+            openModal('success-modal'); // Open success modal
+        } else {
+            openModal('error-modal'); // Open error modal
         }
-    </script>
-    {% endblock %}
+    }
+</script>
+
+{% endblock %}

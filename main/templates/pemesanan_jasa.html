@@ -74,6 +74,24 @@
         .btn-red:hover {
             background-color: #c0392b;
         }
+
+        .testimonibtn {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #fff; /* Text color */
+        background-color: #007bff; /* Background color */
+        border: none;
+        border-radius: 5px; /* Rounded corners */
+        text-decoration: none; /* Remove underline */
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth hover effect */
+        }
+
+        .testimonibtn:hover {
+        background-color: #0056b3; /* Darker background on hover */
+        }
     </style>
 </head>
 <div class="my-20 container mx-auto px-96 py-8">
@@ -106,7 +124,7 @@
                 <td>2024-11-15</td>
                 <td>Rp 180.000</td>
                 <td>Pesanan Selesai</td>
-                <td><button>Buat Testimoni</button></td>
+                <td><a href="{% url 'testimoni:form_testimoni' %}" class="testimonibtn">Buat Testimoni</a></td>
             </tr>
             <tr>
                 <td>3</td>

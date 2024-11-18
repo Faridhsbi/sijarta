@@ -54,7 +54,7 @@
                         <a href="{% url 'authentication:logout' %}" class="text-white hover:bg-red-700 px-4 py-2 rounded transition duration-300 bg-red-500">Logout</a>
                         <span class="text-gray-300">Pekerja, <b>{{ user.nama }}</b></span>
                         <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
-                            <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
+                            <img src="{{ user.link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
                         </div>
                     {% endif %}
                 {% else %}

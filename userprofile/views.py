@@ -119,7 +119,7 @@ def edit_profile_pengguna(request):
         user.alamat = request.POST.get('alamat')
         user.save()
         messages.success(request, "Profil pengguna berhasil diperbarui.")
-        return redirect('profile')
+        return redirect('userprofile:profile')
 
     return render(request, 'edit_profile_pengguna.html', {'user': user})
 
@@ -141,7 +141,7 @@ def edit_profile_pekerja(request):
         user.link_foto = request.POST.get('link_foto')
         user.save()
         messages.success(request, "Profil pekerja berhasil diperbarui.")
-        return redirect('profile')
+        return redirect('userprofile:profile')
 
     return render(request, 'edit_profile_pekerja.html', {'user': user})
 

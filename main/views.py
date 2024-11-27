@@ -1,15 +1,45 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 import psycopg2
-
+from django.db import connection
 # # Create your views here.
+def get_cookie(request, key):
+    return request.COOKIES.get(key)
 
-@login_required(login_url='/auth')
+def get_message(request):
+    message = request.COOKIES.get('message')
+    if message:
+        response = render(request, "homepage.html", {"message": message})
+        response.delete_cookie('message')  # Remove the message after displaying it
+        return response
+    return render(request, "homepage.html")
+
+def execute_query(query, params=None):
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        if query.strip().upper().startswith("SELECT"):
+            return cursor.fetchall()
+        else:
+            return cursor.rowcount
+
+
+# @login_required(login_url='/auth')
 def show_main(request):
-    context = {"user": request.user}   
+    user_id = get_cookie(request, 'user_id')
+    user_name = None
+    if user_id:
+        query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
+        params = [user_id]
+        result = execute_query(query, params)
+        if result:
+            user_name = result[0][0]
+    context = {
+        'user_id': user_id,
+        'user_name': user_name,
+    }
     return render(request, "homepage.html", context)
 
-@login_required(login_url='/auth')
+# @login_required(login_url='/auth')
 def show_subkategori(request):
     context = {"user": request.user}   
     if request.user.role == "pengguna" :
@@ -17,7 +47,7 @@ def show_subkategori(request):
     else :
         return render(request, "subkategori_pekerja.html", context)
 
-@login_required(login_url='/auth')
+# @login_required(login_url='/auth')
 def show_pemesananjasa(request):
     context = {"user": request.user}   
     if request.user.role == "pengguna" :

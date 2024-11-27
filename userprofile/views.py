@@ -1,18 +1,33 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from authentication.models import *
+from django.db import connection
+# # Create your views here.
+
+
+def execute_query(query, params=None):
+    with connection.cursor() as cursor:
+        cursor.execute(query, params)
+        if query.strip().upper().startswith("SELECT"):
+            return cursor.fetchall()
+        else:
+            return cursor.rowcount
+
 
 
 def show_profile_pengguna(request):
+    query = "SELECT nama, jenis_kelamin, no_hp, tgl_lahir, alamat, saldo_mypay, link_foto FROM pengguna WHERE id = %s"
+    params = [request.user.id]
+    result = execute_query(query, params)
     context = {
-        'nama' : 'Budi',
-        'jenis_kelamin' : 'Laki-laki',
-        'no_hp' : "0857111",
-        'tgl_lahir' : "01-10-2005",
-        'alamat' : "jakarta",
-        'saldo_mypay'  : 200000,
-        'link_foto' : "https://st2.depositphotos.com/4211323/8820/v/950/depositphotos_88205990-stock-illustration-stop-tyrannosaurus-red-is-dangerous.jpg"
+        'nama': result[0][0],
+        'jenis_kelamin': result[0][1],
+        'no_hp': result[0][2],
+        'tgl_lahir': result[0][3],
+        'alamat': result[0][4],
+        'saldo_mypay': result[0][5],
+        'link_foto': result[0][6],
     }
     return render(request, 'profile_pengguna.html', context)
 

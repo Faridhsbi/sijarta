@@ -16,7 +16,7 @@ class User(AbstractUser):
     saldo_my_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     role = models.CharField(max_length=10, choices=[('pengguna', 'Pengguna'), ('pekerja', 'Pekerja')])
 
-    USERNAME_FIELD = 'no_hp'  # Harus ada
+    # USERNAME_FIELD = 'no_hp'  # Harus ada
     def __str__(self):
         return self.nama
 

@@ -143,8 +143,8 @@ CREATE TABLE TR_PEMBELIAN_VOUCHER(
 CREATE TABLE TR_PEMESANAN_JASA (
     Id UUID,
     TglPemesanan DATE NOT NULL,
-    TglPekerjaan DATE NOT NULL,
-    WaktuPekerjaan INTERVAL NOT NULL,
+    TglPekerjaan DATE,
+    WaktuPekerjaan INTERVAL,
     TotalBiaya DECIMAL NOT NULL CHECK (TotalBiaya>=0),
     IdPelanggan UUID,
     IdPekerja UUID,

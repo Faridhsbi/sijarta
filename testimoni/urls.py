@@ -4,5 +4,5 @@ import testimoni.views
 app_name = 'testimoni'
 
 urlpatterns = [
-    path('', testimoni.views.form_testimoni, name='form_testimoni'),
+    # path('', testimoni.views.form_testimoni, name='form_testimoni'),
 ]

@@ -6,8 +6,8 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<div class="page min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-xl w-full space-y-8 form-style bg-white shadow-lg p-10 mb-10" style="border-radius: 1rem;">
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-xl w-full space-y-8 bg-white shadow-lg p-10 rounded-lg">
     <div>
       <h2 class="mt-6 text-center text-3xl font-extrabold text-blue-800">
         Create your account
@@ -16,74 +16,38 @@
     <form class="mt-8 space-y-6" method="POST">
       {% csrf_token %}
       <input type="hidden" name="remember" value="true">
-      <div class="rounded-md -space-y-px">
-      {% for field in form %}
-                <div class="{% if not forloop.first %}mt-6{% endif %}">
-                  <label for="{{ field.id_for_label }}" class="mb-2 font-semibold text-black ">
-                    {{ field.label }}
-                  </label>
-                  <div class="relative">
-                    {% if field.field.widget.input_type == 'select' %}
-                    <select 
-                      id="{{ field.id_for_label }}" 
-                      name="{{ field.name }}" 
-                      class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-                    >
-                      {% for choice in field.field.choices %}
-                        <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                      {% endfor %}
-                    </select>
-                   {% elif field.field.widget.input_type == 'radio' %}
-                      <div class="flex items-center space-x-4">
-                          {% for radio in field %}
-                              <div class="flex items-center">
-                              <input 
-                                  type="radio" 
-                                  id="{{ radio.id_for_label }}" 
-                                  name="{{ field.name }}" 
-                                  value="{{ radio.choice_value }}" 
-                                  {% if radio.choice_value == field.value %}checked{% endif %} 
-                                  class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                                  
-                              >
-                              <label for="{{ radio.id_for_label }}" class="ml-2 text-gray-700">
-                                  {{ radio.choice_label }}
-                              </label>
-                          </div>
-                          {% endfor %}
-                      </div>
-                    
-                    {% else %}
-                    <input 
-                      type="{{ field.field.widget.input_type }}" 
-                      id="{{ field.id_for_label }}" 
-                      name="{{ field.name }}" 
-                      class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
-                      placeholder="{{ field.label }}"
-                      value="{{ field.value|default_if_none:'' }}"
-                      {% if field.field.required %}required{% endif %}
-                    >
-                    {% endif %}
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      {% if field.errors %}
-                        <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm- 7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                        </svg>
-                      {% endif %}
-                    </div>
-                  </div>
-                  {% if field.errors %}
-                    {% for error in field.errors %}
-                      <p class="mt-1 text-sm text-red-600">{{ error }}</p>
-                    {% endfor %}
-                  {% endif %}
-          </div>
-          <div class="h-4"></div> <!-- gap antar label -->
-        {% endfor %}
+      <div class="rounded-md">
+        <div class="mb-4">
+          <label for="nama" class="mb-2 font-semibold text-black">Nama</label>
+          <input type="text" id="nama" name="nama" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required>
+        </div>
+        <div class="mb-4">
+          <label for="password1" class="mb-2 font-semibold text-black">Password</label>
+          <input type="password" id="password1" name="password1" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required>
+        </div>
+        <div class="mb-4">
+          <label for="jenis_kelamin" class="mb-2 font-semibold text-black">Jenis Kelamin</label>
+          <select id="jenis_kelamin" name="jenis_kelamin" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required>
+            <option value="L">Laki-laki</option>
+            <option value="K">Perempuan</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="no_hp" class="mb-2 font-semibold text-black">No. HP</label>
+          <input type="text" id="no_hp" name="no_hp" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required>
+        </div>
+        <div class="mb-4">
+          <label for="tgl_lahir" class="mb-2 font-semibold text-black">Tanggal Lahir</label>
+          <input type="date" id="tgl_lahir" name="tgl_lahir" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required>
+        </div>
+        <div class="mb-4">
+          <label for="alamat" class="mb-2 font-semibold text-black">Alamat</label>
+          <textarea id="alamat" name="alamat" class="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300" required></textarea>
+        </div>
       </div>
 
       <div>
-        <button type="submit" class="text-sm font-medium rounded-md text-white bg-blue-800 hover:bg-blue-900 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700">
+        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-800 hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700">
           Register
         </button>
       </div>
@@ -102,7 +66,7 @@
     <div class="text-center mt-4">
       <p class="text-sm text-black">
         Already have an account?
-        <a href="{% url 'authentication:login' %}" class="font-medium text-[#83B4FF] hover:text-blue-500">
+        <a href="{% url 'authentication:login' %}" class="font-medium text-blue-600 hover:text-blue-500">
           Login here
         </a>
       </p>

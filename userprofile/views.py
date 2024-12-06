@@ -385,7 +385,7 @@ def new_transaction(request):
             # Update status
             query_update_status = '''
             INSERT INTO sijarta.tr_pemesanan_status VALUES
-            (%s, (SELECT Id FROM STATUS_PESANAN WHERE Status='Mencari Pekerja'), CURRENT_TIMESTAMP)
+            (%s, (SELECT Id FROM sijarta.STATUS_PESANAN WHERE Status='Mencari Pekerja'), CURRENT_TIMESTAMP)
             '''
             execute_query(query_update_status, [jasa_id])
 

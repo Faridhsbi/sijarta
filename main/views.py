@@ -26,7 +26,7 @@ def execute_query(query, params=None):
 # @login_required(login_url='/auth')
 def show_main(request):
     user_id = get_cookie(request, 'user_id')
-    if not user_id:
+    if not user_id or user_id == None:
         return redirect('/auth/login')
     user_name = None
     if user_id:
@@ -39,6 +39,7 @@ def show_main(request):
         'user_id': user_id,
         'user_name': user_name,
     }
+    print(user_name)
     return render(request, "homepage.html", context)
 
 # @login_required(login_url='/auth')

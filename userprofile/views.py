@@ -6,7 +6,16 @@ from django.db import connection
 
 from main.views import get_cookie
 # # Create your views here.
+def get_cookie(request, key):
+    return request.COOKIES.get(key)
 
+def get_message(request):
+    message = request.COOKIES.get('message')
+    if message:
+        response = render(request, "homepage.html", {"message": message})
+        response.delete_cookie('message')  # Remove the message after displaying it
+        return response
+    return render(request, "homepage.html")
 
 def execute_query(query, params=None):
     with connection.cursor() as cursor:
@@ -180,10 +189,18 @@ def edit_profile_pekerja(request):
     return render(request, 'edit_profile_pekerja.html', {'user': user})
 
 def show_mypay(request): # PLACEHOLDER
-    user = request.user
-    transaksi1 = {'nominal': 15000, 'tanggal': '20-10-2024', 'kategori': 'Transfer MyPay'}
-    transaksi2 = {'nominal': -100000, 'tanggal': '16-11-2024', 'kategori': 'Pemesanan Jasa'}
-    transaksi3 = {'nominal': 15000, 'tanggal': '12-12-2024', 'kategori': 'TopUp MyPay'}
+    # user = request.user
+    # transaksi1 = {'nominal': 15000, 'tanggal': '20-10-2024', 'kategori': 'Transfer MyPay'}
+    # transaksi2 = {'nominal': -100000, 'tanggal': '16-11-2024', 'kategori': 'Pemesanan Jasa'}
+    # transaksi3 = {'nominal': 15000, 'tanggal': '12-12-2024', 'kategori': 'TopUp MyPay'}
+    user_id = get_cookie(request, 'user_id')
+
+
+    query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
+    params = [user_id]
+    result = execute_query(query, params)
+    if result:
+        user_name = result[0][0]
 
     context = {
         'no_hp' : '0857111',

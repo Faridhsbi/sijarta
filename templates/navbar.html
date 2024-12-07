@@ -6,63 +6,38 @@
                 <h1 class="text-2xl font-bold text-center text-white">SIJARTA</h1>
             </div>
             <div class="hidden md:flex items-center space-x-6">
-
-            <!-- Edit buat SS yg bawah comment aja nnt 
-                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Homepage</a>
-                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">MyPay</a>
-                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Diskon</a>
-                <a href="" class="snav text-white  px-3 py-2 rounded transition duration-300">Kelola Pesanan Saya</a>
-                <a href="{% url 'userprofile:show_pengguna' %}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300">Profile</a>
-                <a href="" class="text-white hover:bg-red-700 px-4 py-2 rounded transition duration-300 bg-red-500">Logout</a>
-                <span class="text-gray-300 mr-4">Pengguna, <b>xaurus</b></span>
-                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
-                    <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
-                </div>
-            
-            <!--
-                <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300 ">Homepage</a>
-                <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Pekerjaan Saya</a>
-                <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Status Pekerjaan</a>
-                <a href="{% url 'userprofile:show_mypay' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">MyPay</a>
-                <a href="{% url 'userprofile:show_pekerja' %}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300">Profile</a>
-                <a href="" class="text-white hover:bg-red-700 px-4 py-2 rounded transition duration-300 bg-red-500">Logout</a>
-                <span class="text-gray-300">Pekerja, <b>car.. haa</b></span>
-                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
-                    <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
-                </div>
-
-            -->
-            <!---->
-                    {% if role == 'pengguna' %}
+                {% if request.COOKIES.user_id%}
+                    {% if user_role == "Pelanggan" %}
                         <a href="{% url 'main:show_main' %}" class="snav text-white  px-3 py-2 rounded transition duration-300">Homepage</a>
                         <a href="{% url 'userprofile:show_mypay' %}" class="snav text-white  px-3 py-2 rounded transition duration-300">MyPay</a>
                         <a href="{% url 'diskon:discount_page'%}" class="snav text-white  px-3 py-2 rounded transition duration-300">Diskon</a>
                         <a href="{% url 'main:show_pemesananjasa' %}" class="snav text-white  px-3 py-2 rounded transition duration-300">Kelola Pesanan Saya</a>
                         <a href="{% url 'userprofile:show_pengguna' %}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300">Profile</a>
                         <a href="{% url 'authentication:logout' %}" class="text-white hover:bg-red-700 px-4 py-2 rounded transition duration-300 bg-red-500">Logout</a>
-                        <span class="text-gray-300 mr-4">Pengguna, <b>{{ user_name }}</b></span>
+                        <span class="text-gray-300 mr-4">Pengguna, <b>{{ nama }}</b></span>
                         {% comment %} <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
                             <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
                         </div> {% endcomment %}
-                    {% elif role == 'pekerja' %}
+                    {% elif user_role == "Pekerja" %}
                         <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300 ">Homepage</a>
                         <a href="{% url 'pekerjaan_app:show_pekerjaan' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Pekerjaan Saya</a>
                         <a href="{% url 'pekerjaan_app:show_status_pekerjaan' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Status Pekerjaan</a>
                         <a href="{% url 'userprofile:show_mypay' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">MyPay</a>
                         <a href="{% url 'userprofile:show_pekerja' %}" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300">Profile</a>
                         <a href="{% url 'authentication:logout' %}" class="text-white hover:bg-red-700 px-4 py-2 rounded transition duration-300 bg-red-500">Logout</a>
-                        <span class="text-gray-300">Pekerja, <b>{{ user_name }}</b></span>
+                        <span class="text-gray-300">Pekerja, <b>{{ nama }}</b></span>
                         <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
-                            <img src="{{ linkfoto }}" alt="Foto Profil" class="w-full h-full object-cover">
+                            <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
                         </div>
-                    {% else %}
-                        <a href="{% url 'authentication:login' %}" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2">
-                            Login
-                        </a>
-                        <a href="{% url 'authentication:choose_role' %}" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-                            Register
-                        </a>
                     {% endif %}
+                {% else %}
+                    <a href="{% url 'authentication:login' %}" class="text-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2">
+                        Login {{ user_id }}
+                    </a>
+                    <a href="{% url 'authentication:choose_role' %}" class="text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                        Register
+                    </a>
+                {% endif %}
                 
             </div>
             <div class="md:hidden flex items-center">

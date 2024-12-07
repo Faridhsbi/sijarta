@@ -1,6 +1,6 @@
 CREATE SCHEMA SIJARTA;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; -- biar bisa pakai fungsi uuid_generate_v4()
-SET search_path TO SIJARTA, public;
+SET search_path TO SIJARTA;
 
 -- tabel 1, USER gabisa udah reserved name di postgre
 CREATE TABLE PENGGUNA (
@@ -143,8 +143,8 @@ CREATE TABLE TR_PEMBELIAN_VOUCHER(
 CREATE TABLE TR_PEMESANAN_JASA (
     Id UUID,
     TglPemesanan DATE NOT NULL,
-    TglPekerjaan DATE,
-    WaktuPekerjaan INTERVAL,
+    TglPekerjaan DATE NOT NULL,
+    WaktuPekerjaan INTERVAL NOT NULL,
     TotalBiaya DECIMAL NOT NULL CHECK (TotalBiaya>=0),
     IdPelanggan UUID,
     IdPekerja UUID,
@@ -192,7 +192,7 @@ CREATE TABLE TESTIMONI(
 
 -- DUMMY DATA PENGGUNA TABEL 1
 INSERT INTO PENGGUNA VALUES 
-(uuid_generate_v4(), 'Edmond Christian', 'L', '0800000', 'pwku123', '2005-12-25', 'alamat ku disini', 99999),
+(uuid_generate_v4(), 'Edmond Christian', 'L', '0800000', 'pwku123', '2005-12-25', 'Jl. alamat ku disini', 99999),
 (uuid_generate_v4(), 'Daffa Naufal', 'L', '08010101', 'capyblapy', '2005-02-25', 'Bikini Bottom Regency', 69),
 (uuid_generate_v4(), 'Emilia', 'P', '081111', 'gatauapaanlah', '1875-05-15', 'Re zero season 3', 1554322),
 (uuid_generate_v4(), 'nama', 'L', '0822222', 'pwd', '1929-02-28', 'alamat', 1),

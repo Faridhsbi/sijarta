@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from os import getenv
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -73,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 # 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'sijarta.context_processors.user_role_processor',
             ],
         },
     },
@@ -92,14 +95,32 @@ WSGI_APPLICATION = 'sijarta.wsgi.application'
 # }
 
 # for later
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'sijarta',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
+
+# from dotenv import load_dotenv
+
+# load_dotenv()
+# pw = os.getenv("SUPABASE_PASSWORD")
+# host = os.getenv("SUPABASE_HOST")
+# username = os.getenv("SUPABASE_USERNAME")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'sijarta',
-        'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': "postgres",
+        'USER': "postgres.jfxaznqkoswraxfjzstl",
+        'PASSWORD': "admincbkadal",
+        'HOST':"aws-0-ap-southeast-1.pooler.supabase.com",
+        'PORT': 6543,
     }
 }
 

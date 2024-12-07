@@ -41,6 +41,7 @@ def show_main(request):
         'user_name': user_name,
         'user_role' : user_role
     }
+    print(user_name)
     return render(request, "homepage.html", context)
 
 # @login_required(login_url='/auth')

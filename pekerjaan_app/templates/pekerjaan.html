@@ -8,8 +8,8 @@
             <label for="kategori" class="block text-gray-700 font-semibold mb-2">Kategori Jasa:</label>
             <select id="kategori" name="kategori" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="updateSubkategori()">
                 <option value="" disabled selected>Pilih Kategori</option>
-                {% for kategori in kategori %}
-                <option value="{{ kategori.kategori }}">{{ kategori.kategori }}</option>
+                {% for kategori, subkategori in kategori.items %}
+                <option value="{{ kategori }}">{{ kategori }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -28,14 +28,14 @@
             {% for pekerjaan in pekerjaan %}
             <div class="border-b py-4 grid grid-cols-12 gap-4 items-center">
                 <div class="col-span-6">
-                    <p><strong>Subkategori:</strong> {{ pekerjaan.subkategori }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.nama_pelanggan }}</p>
-                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.tanggal_pemesanan }} | <strong>Tanggal Pekerjaan:</strong> {{ pekerjaan.tanggal_pekerjaan }}</p>
+                    <p><strong>Subkategori:</strong> {{ pekerjaan.1 }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.2 }}</p>
+                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.5 }} | <strong>Sesi:</strong> {{ pekerjaan.3 }}</p>
                 </div>
                 <div class="col-span-3">
-                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.total_biaya }}</p>
+                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.4 }}</p>
                 </div>
                 <div class="col-span-3">
-                    <button onclick="kerjakanPesanan('{{ pekerjaan.id }}')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Kerjakan Pesanan</button>
+                    <button onclick="kerjakanPesanan('{{ pekerjaan.0 }}', '{{ pekerjaan.3 }}')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Kerjakan Pesanan</button>
                 </div>
             </div>
             {% endfor %}
@@ -44,17 +44,18 @@
 </div>
 
 <script>
+    console.log("Kategori Data:", {{ kategori|safe }});
+
     const kategoriData = {{ kategori|safe }};
-    const pekerjaanData = {{ pekerjaan|safe }};
-// PLACEHOLDER SEBELUM PAKE SQL QUERY
+    {% comment %} const pekerjaanData = {{ pekerjaan|safe }}; {% endcomment %}
+
     function updateSubkategori() {
         const kategori = document.getElementById('kategori').value;
         const subkategoriSelect = document.getElementById('subkategori');
         subkategoriSelect.innerHTML = '<option value="" disabled selected>Pilih Subkategori</option>';
 
-        const selectedKategori = kategoriData.find(k => k.kategori === kategori);
-        if (selectedKategori) {
-            selectedKategori.subkategori.forEach(subkategori => {
+        if (kategoriData[kategori]) {
+            kategoriData[kategori].forEach(subkategori => {
                 const option = document.createElement('option');
                 option.value = subkategori;
                 option.textContent = subkategori;
@@ -66,37 +67,39 @@
     function filterPekerjaan() {
         const kategori = document.getElementById('kategori').value;
         const subkategori = document.getElementById('subkategori').value;
-        const pekerjaanList = document.getElementById('pekerjaan-list');
-        pekerjaanList.innerHTML = '';
 
-        const filteredPekerjaan = pekerjaanData.filter(pekerjaan => {
-            return (kategori === '' || pekerjaan.kategori === kategori) &&
-                   (subkategori === '' || pekerjaan.subkategori === subkategori);
-        });
+        const url = new URL(window.location.href);
+        url.searchParams.set('kategori', kategori);
+        url.searchParams.set('subkategori', subkategori);
 
-        filteredPekerjaan.forEach(pekerjaan => {
-            const pekerjaanDiv = document.createElement('div');
-            pekerjaanDiv.classList.add('border-b', 'py-4', 'grid', 'grid-cols-12', 'gap-4', 'items-center');
-            pekerjaanDiv.innerHTML = `
-                <div class="col-span-6">
-                    <p><strong>Subkategori:</strong> ${pekerjaan.subkategori} | <strong>Nama Pelanggan:</strong> ${pekerjaan.nama_pelanggan}</p>
-                    <p><strong>Tanggal Pemesanan:</strong> ${pekerjaan.tanggal_pemesanan} | <strong>Tanggal Pekerjaan:</strong> ${pekerjaan.tanggal_pekerjaan}</p>
-                </div>
-                <div class="col-span-3">
-                    <p><strong>Total Biaya:</strong> Rp ${pekerjaan.total_biaya}</p>
-                </div>
-                <div class="col-span-3">
-                    <button onclick="kerjakanPesanan('${pekerjaan.id}')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Kerjakan Pesanan</button>
-                </div>
-            `;
-            pekerjaanList.appendChild(pekerjaanDiv);
-        });
+        window.location.href = url; // Navigate with the updated query parameters
     }
 
-    function kerjakanPesanan(pekerjaanId) {
-        // set status pekerjaan menjadi "Menunggu Pekerja Terdekat"
-        // dan menghapus pekerjaan dari daftar pekerjaan yang tersedia
-        alert(`Pesanan dengan ID ${pekerjaanId} sedang dikerjakan.`);
+    function kerjakanPesanan(pekerjaanId, sesi) {
+        // Create a form dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url 'pekerjaan_app:handle_kerjakan_pesanan' %}';  // Replace with your URL
+
+        // Add CSRF token
+        const csrfToken = '{{ csrf_token }}';
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+
+        // Add transaction ID
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'pekerjaan_id';
+        idInput.value = pekerjaanId;
+        form.appendChild(idInput);
+
+
+        // Append the form to the body and submit it
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
 {% endblock %}

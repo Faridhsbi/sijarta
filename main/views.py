@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 import psycopg2
 from django.db import connection
 # # Create your views here.
@@ -26,8 +26,9 @@ def execute_query(query, params=None):
 # @login_required(login_url='/auth')
 def show_main(request):
     user_id = get_cookie(request, 'user_id')
+    user_role = get_cookie(request, 'user_role')
     if not user_id:
-        return redirect('/auth/login')
+        return redirect('/auth/')
     user_name = None
     if user_id:
         query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
@@ -38,6 +39,7 @@ def show_main(request):
     context = {
         'user_id': user_id,
         'user_name': user_name,
+        'user_role' : user_role
     }
     return render(request, "homepage.html", context)
 

@@ -75,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 # 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'sijarta.context_processors.user_role_processor',
             ],
         },
     },
@@ -105,12 +106,12 @@ WSGI_APPLICATION = 'sijarta.wsgi.application'
 #     }
 # }
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
-pw = os.getenv("SUPABASE_PASSWORD")
-host = os.getenv("SUPABASE_HOST")
-username = os.getenv("SUPABASE_USERNAME")
+# load_dotenv()
+# pw = os.getenv("SUPABASE_PASSWORD")
+# host = os.getenv("SUPABASE_HOST")
+# username = os.getenv("SUPABASE_USERNAME")
 
 DATABASES = {
     'default': {

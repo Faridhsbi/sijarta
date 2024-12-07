@@ -210,7 +210,14 @@ def show_mypay(request):
     user_name = get_cookie(request, 'user_name')
     if not user_id:
         return redirect('authentication:login')
-    
+    role = execute_query("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
+    linkfoto = ''
+    if role:
+        role = 'pekerja'
+        linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
+    else:
+        role = 'pengguna'
+
     # user
     query_user = "SELECT nohp, saldomypay FROM SIJARTA.pengguna WHERE id = %s"
     params_user = [user_id]
@@ -226,8 +233,8 @@ def show_mypay(request):
     # transaksi
     query_transactions = '''
     SELECT tr.id, tr.tgl, tr.nominal, kat.nama
-    FROM tr_mypay tr 
-    JOIN kategori_tr_mypay kat ON kat.id = tr.kategoriid 
+    FROM sijarta.tr_mypay tr 
+    JOIN sijarta.kategori_tr_mypay kat ON kat.id = tr.kategoriid 
     WHERE userid = %s
     ORDER BY tr.tgl DESC
     '''
@@ -243,6 +250,8 @@ def show_mypay(request):
         'transactions': transactions,
         'user_id': user_id,
         'user_name': user_name,
+        'role': role,
+        'linkfoto': linkfoto,
     }
 
     return render(request, 'mypay.html', context)
@@ -290,14 +299,15 @@ def new_transaction(request):
     role = execute_query("SELECT * FROM pekerja WHERE id = %s", [user_id])
     if role:
         role = 'pekerja'
+        linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
     else:
         role = 'pengguna'
 
     # Fetch kategori transaksi
     if role == 'pekerja':
-        query_kategori_transaksi = "SELECT id, nama FROM kategori_tr_mypay WHERE nama != 'Membayar transaksi jasa' AND nama != 'Menerima honor transaksi jasa'"
+        query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Membayar transaksi jasa' AND nama != 'Menerima honor transaksi jasa'"
     else:
-        query_kategori_transaksi = "SELECT id, nama FROM kategori_tr_mypay WHERE nama != 'Menerima honor transaksi jasa'"
+        query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Menerima honor transaksi jasa'"
     kategori_transaksi = execute_query(query_kategori_transaksi)
 
     # Fetch jasa
@@ -342,6 +352,7 @@ def new_transaction(request):
         'tanggal_transaksi': tanggal[0][0],
         'nama_bank': [bank[0] for bank in nama_bank],  # ambil nama bank
         'role': role,
+        'linkfoto': linkfoto,
     }
 
     if request.method == 'POST':

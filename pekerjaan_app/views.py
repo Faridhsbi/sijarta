@@ -1,3 +1,4 @@
+import uuid
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -31,6 +32,7 @@ def show_pekerjaan(request):
     role = execute_query("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
     if role:
         role = 'pekerja'
+        linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
     else:
         role = 'pengguna'
 
@@ -165,6 +167,7 @@ def show_pekerjaan(request):
         'kategori': kategori_dict,
         'role': role,
         'pekerjaan': filtered_pekerjaan,
+        'likfoto': linkfoto,
     }
 
     return render(request, 'pekerjaan.html', context)
@@ -196,28 +199,243 @@ def handle_kerjakan_pesanan(request):
 
     return redirect('pekerjaan_app:show_pekerjaan')
 
-def show_status_pekerjaan(request): # PLACEHOLDER
-    user = request.user
-    if user.role != 'pekerja':
-        messages.error(request, "Anda tidak memiliki izin untuk mengakses halaman ini.")
+# def show_status_pekerjaan(request): # PLACEHOLDER
+#     user = request.user
+#     if user.role != 'pekerja':
+#         messages.error(request, "Anda tidak memiliki izin untuk mengakses halaman ini.")
+#         return redirect('main:show_main')
+    
+
+#     kategori1 = {'kategori': 'Home Cleaning', 'subkategori': ['Setrika', 'Daily Cleaning', 'Pembersihan Dapur']}
+#     kategori2 = {'kategori': 'Massage', 'subkategori': ['Foot massage', 'Back massage', 'Arm massage', 'Full package']}
+#     kategori3 = {'kategori': 'Deep Cleaning', 'subkategori': ['Cuci kasur', 'Cuci sofa']}
+
+#     pekerjaan1 = {'id': 1, 'kategori': 'Home Cleaning', 'subkategori': 'Setrika', 'nama_pelanggan': 'Budi', 'tanggal_pemesanan': '10-11-2024', 'tanggal_pekerjaan': '20-11-2024', 'total_biaya': 150000, 'status': 'Menunggu Pekerja Berangkat'}
+#     pekerjaan2 = {'id': 2, 'kategori': 'Home Cleaning', 'subkategori': 'Setrika', 'nama_pelanggan': 'Caca', 'tanggal_pemesanan': '15-11-2024', 'tanggal_pekerjaan': '22-11-2024', 'total_biaya': 100000, 'status': 'Pekerja Tiba Di Lokasi'}
+
+#     pekerjaan5 = {'id': 5, 'kategori': 'Massage', 'subkategori': 'Foot massage', 'nama_pelanggan': 'asdsadv', 'tanggal_pemesanan': '15-11-2024', 'tanggal_pekerjaan': '16-11-2024', 'total_biaya': 130250, 'status': 'Pelayanan Jasa Sedang Dilakukan'}
+#     pekerjaan7 = {'id': 7, 'kategori': 'Massage', 'subkategori': 'Arm massage', 'nama_pelanggan': 'efea', 'tanggal_pemesanan': '19-11-2024', 'tanggal_pekerjaan': '20-11-2024', 'total_biaya': 300000, 'status': 'Pesanan Selesai'}
+    
+#     context = {
+#         'no_hp' : '0857111',
+#         'saldo_mypay' : 200000,
+#         'kategori' : [kategori1, kategori2, kategori3],
+#         'pekerjaan' : [pekerjaan1, pekerjaan2, pekerjaan5, pekerjaan7],
+#     }
+
+#     return render(request, 'status_pekerjaan.html', context)
+
+def show_status_pekerjaan(request):
+    user_id = get_cookie(request, 'user_id')
+    user_name = get_cookie(request, 'user_name')
+    role = execute_query("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
+    if role:
+        role = 'pekerja'
+        linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
+    else:
+        role = 'pengguna'
+
+    if role != 'pekerja':
         return redirect('main:show_main')
     
+    status = execute_query('''
+    SELECT status FROM sijarta.status_pesanan
+    WHERE status != 'Menunggu Pembayaran'
+    AND status != 'Mencari Pekerja'
+    AND status != 'Terjadi Kesalahan pada Sistem'
+    ''')
+    # status_list = [s[0] for s in status]
+    print(status)
 
-    kategori1 = {'kategori': 'Home Cleaning', 'subkategori': ['Setrika', 'Daily Cleaning', 'Pembersihan Dapur']}
-    kategori2 = {'kategori': 'Massage', 'subkategori': ['Foot massage', 'Back massage', 'Arm massage', 'Full package']}
-    kategori3 = {'kategori': 'Deep Cleaning', 'subkategori': ['Cuci kasur', 'Cuci sofa']}
+    query_pekerjaan = '''
+    SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+    FROM sijarta.tr_pemesanan_jasa tr
+    JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+    JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+    JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+    JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+    JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+    WHERE tr.idpekerja = %s
+    AND sp.status = 'Selesai'
+    '''
+    pekerjaan_selesai = execute_query(query_pekerjaan, [user_id])
 
-    pekerjaan1 = {'id': 1, 'kategori': 'Home Cleaning', 'subkategori': 'Setrika', 'nama_pelanggan': 'Budi', 'tanggal_pemesanan': '10-11-2024', 'tanggal_pekerjaan': '20-11-2024', 'total_biaya': 150000, 'status': 'Menunggu Pekerja Berangkat'}
-    pekerjaan2 = {'id': 2, 'kategori': 'Home Cleaning', 'subkategori': 'Setrika', 'nama_pelanggan': 'Caca', 'tanggal_pemesanan': '15-11-2024', 'tanggal_pekerjaan': '22-11-2024', 'total_biaya': 100000, 'status': 'Pekerja Tiba Di Lokasi'}
+    query_pekerjaan = '''
+    SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+    FROM sijarta.tr_pemesanan_jasa tr
+    JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+    JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+    JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+    JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+    JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+    WHERE tr.idpekerja = %s
+    AND sp.status = 'Dibatalkan'
+    '''
+    pekerjaan_dibatalkan = execute_query(query_pekerjaan, [user_id])
 
-    pekerjaan5 = {'id': 5, 'kategori': 'Massage', 'subkategori': 'Foot massage', 'nama_pelanggan': 'asdsadv', 'tanggal_pemesanan': '15-11-2024', 'tanggal_pekerjaan': '16-11-2024', 'total_biaya': 130250, 'status': 'Pelayanan Jasa Sedang Dilakukan'}
-    pekerjaan7 = {'id': 7, 'kategori': 'Massage', 'subkategori': 'Arm massage', 'nama_pelanggan': 'efea', 'tanggal_pemesanan': '19-11-2024', 'tanggal_pekerjaan': '20-11-2024', 'total_biaya': 300000, 'status': 'Pesanan Selesai'}
-    
+    query_pekerjaan = '''
+    SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+    FROM sijarta.tr_pemesanan_jasa tr
+    JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+    JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+    JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+    JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+    JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+    WHERE tr.idpekerja = %s
+    AND sp.status = 'Sedang Dikerjakan'
+    AND tr.id NOT IN(
+    SELECT tr.id FROM sijarta.tr_pemesanan_jasa
+    JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+    JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+    WHERE sp.status = 'Selesai' OR sp.status = 'Dibatalkan'
+    )
+    '''
+    pekerjaan_sedang_dikerjakan = execute_query(query_pekerjaan, [user_id])
+    query_pekerjaan = '''
+    SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+    FROM sijarta.tr_pemesanan_jasa tr
+    JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+    JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+    JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+    JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+    JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+    WHERE tr.idpekerja = %s
+    AND sp.status = 'Menunggu Pekerja'
+    AND tr.id NOT IN(
+    SELECT tr.id FROM sijarta.tr_pemesanan_jasa
+    JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+    JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+    WHERE sp.status = 'Sedang Dikerjakan' OR sp.status = 'Dibatalkan' OR sp.status = 'Selesai'
+    )
+    '''
+    pekerjaan_menunggu_pekerja = execute_query(query_pekerjaan, [user_id])
+
+    if 'status' in request.GET and 'kategori' in request.GET:
+        print(request.GET['status'])
+        print(request.GET['status'] == '')
+        print(request.GET['kategori'])
+        print(request.GET['kategori'] == '')
+        selected_status = request.GET['status']
+        selected_kategori = request.GET['kategori']
+        selected_kategori = "%" + selected_kategori.lower() + "%"
+
+        query_pekerjaan = '''
+        SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+        FROM sijarta.tr_pemesanan_jasa tr
+        JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+        JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+        JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+        JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+        JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+        WHERE tr.idpekerja = %s
+        AND sp.status = 'Selesai'
+        AND LOWER(namasubkategori) LIKE %s
+        '''
+        pekerjaan_selesai = execute_query(query_pekerjaan, [user_id, selected_kategori])
+
+        query_pekerjaan = '''
+        SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+        FROM sijarta.tr_pemesanan_jasa tr
+        JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+        JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+        JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+        JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+        JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+        WHERE tr.idpekerja = %s
+        AND sp.status = 'Dibatalkan'
+        AND LOWER(namasubkategori) LIKE %s
+        '''
+        pekerjaan_dibatalkan = execute_query(query_pekerjaan, [user_id, selected_kategori])
+
+        query_pekerjaan = '''
+        SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+        FROM sijarta.tr_pemesanan_jasa tr
+        JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+        JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+        JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+        JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+        JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+        WHERE tr.idpekerja = %s
+        AND sp.status = 'Sedang Dikerjakan'
+        AND tr.id NOT IN(
+        SELECT tr.id FROM sijarta.tr_pemesanan_jasa
+        JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+        JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+        WHERE sp.status = 'Selesai' OR sp.status = 'Dibatalkan'
+        ) AND LOWER(namasubkategori) LIKE %s
+        '''
+        pekerjaan_sedang_dikerjakan = execute_query(query_pekerjaan, [user_id, selected_kategori])
+
+
+        query_pekerjaan = '''
+        SELECT DISTINCT tr.id, namasubkategori, p.nama, sesi, totalbiaya, tglpemesanan, tglpekerjaan, sp.status
+        FROM sijarta.tr_pemesanan_jasa tr
+        JOIN sijarta.subkategori_jasa skj ON tr.idkategorijasa = skj.id
+        JOIN sijarta.kategori_jasa kj ON kj.id = skj.kategorijasaid
+        JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+        JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+        JOIN sijarta.pengguna p ON tr.idpelanggan = p.id
+        WHERE tr.idpekerja = %s
+        AND sp.status = 'Menunggu Pekerja'
+        AND tr.id NOT IN(
+        SELECT tr.id FROM sijarta.tr_pemesanan_jasa
+        JOIN sijarta.tr_pemesanan_status tr_status ON tr_status.idtrpemesanan = tr.id
+        JOIN sijarta.status_pesanan sp ON tr_status.idstatus = sp.id
+        WHERE sp.status = 'Sedang Dikerjakan' OR sp.status = 'Dibatalkan' OR sp.status = 'Selesai'
+        ) AND LOWER(namasubkategori) LIKE %s
+        '''
+        pekerjaan_menunggu_pekerja = execute_query(query_pekerjaan, [user_id, selected_kategori])
+
+        if selected_status == 'Selesai':
+            pekerjaan_dibatalkan = []
+            pekerjaan_menunggu_pekerja = []
+            pekerjaan_sedang_dikerjakan = []
+        elif selected_status == 'Dibatalkan':
+            pekerjaan_menunggu_pekerja = []
+            pekerjaan_sedang_dikerjakan = []
+            pekerjaan_selesai = []
+        elif selected_status == 'Sedang Dikerjakan':
+            pekerjaan_menunggu_pekerja = []
+            pekerjaan_selesai = []
+            pekerjaan_dibatalkan = []
+        elif selected_status == 'Menunggu Pekerja':
+            pekerjaan_selesai = []
+            pekerjaan_dibatalkan = []
+            pekerjaan_sedang_dikerjakan = []
+
+
     context = {
-        'no_hp' : '0857111',
-        'saldo_mypay' : 200000,
-        'kategori' : [kategori1, kategori2, kategori3],
-        'pekerjaan' : [pekerjaan1, pekerjaan2, pekerjaan5, pekerjaan7],
+        'user_id': user_id,
+        'user_name': user_name,
+        'role': role,
+        'likfoto': linkfoto,
+        'status_pekerjaan': status,
+        'pekerjaan_selesai': pekerjaan_selesai,
+        'pekerjaan_dibatalkan': pekerjaan_dibatalkan,
+        'pekerjaan_sedang_dikerjakan': pekerjaan_sedang_dikerjakan,
+        'pekerjaan_menunggu_pekerja': pekerjaan_menunggu_pekerja,
     }
-
     return render(request, 'status_pekerjaan.html', context)
+
+def handle_update_status(request):
+    print("tesTES")
+    if request.method == 'POST':
+        pekerjaan_id = request.POST.get('pekerjaan_id')
+        new_status = request.POST.get('new_status')
+
+        # Update the status of the pekerjaan in the database
+        print(pekerjaan_id, new_status)
+        execute_query("SET SEARCH_PATH TO sijarta")
+        execute_query('DROP EXTENSION "uuid-ossp"')
+        execute_query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+        # transaction_id = str(uuid.uuid4())
+        query_update_status = '''
+            INSERT INTO sijarta.tr_pemesanan_status VALUES
+            (%s, (SELECT Id FROM sijarta.status_pesanan WHERE status= %s), CURRENT_TIMESTAMP)
+            '''
+        execute_query(query_update_status, [pekerjaan_id, new_status])
+
+        # Redirect back to the status pekerjaan page
+        return redirect('pekerjaan_app:show_status_pekerjaan')
+
+    return redirect('pekerjaan_app:show_status_pekerjaan')

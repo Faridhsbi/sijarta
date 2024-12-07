@@ -7,4 +7,5 @@ urlpatterns = [
     path('', show_pekerjaan, name='show_pekerjaan'),
     path('status/', show_status_pekerjaan, name='show_status_pekerjaan'),
     path('kerjakan/', handle_kerjakan_pesanan, name='handle_kerjakan_pesanan'),
+    path('update_status/', handle_update_status, name='handle_update_status'),
 ]

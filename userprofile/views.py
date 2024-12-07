@@ -346,13 +346,10 @@ def show_mypay(request):
     user_name = get_cookie(request, 'user_name')
     if not user_id:
         return redirect('authentication:login')
-    role = execute_query("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
+    user_role = get_cookie(request, 'user_role')
     linkfoto = ''
-    if role:
-        role = 'pekerja'
+    if user_role == 'Pekerja':
         linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
-    else:
-        role = 'pengguna'
 
     # user
     query_user = "SELECT nohp, saldomypay FROM SIJARTA.pengguna WHERE id = %s"
@@ -386,8 +383,8 @@ def show_mypay(request):
         'transactions': transactions,
         'user_id': user_id,
         'user_name': user_name,
-        'role': role,
-        'linkfoto': linkfoto,
+        'user_role': user_role,
+        'link_foto': linkfoto,
     }
 
     return render(request, 'mypay.html', context)
@@ -432,15 +429,13 @@ def new_transaction(request):
     
     execute_query("SET search_path TO SIJARTA")
 
-    role = execute_query("SELECT * FROM pekerja WHERE id = %s", [user_id])
-    if role:
-        role = 'pekerja'
+    linkfoto = ''
+    user_role = get_cookie(request, 'user_role')
+    if user_role == 'Pekerja':
         linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
-    else:
-        role = 'pengguna'
 
     # Fetch kategori transaksi
-    if role == 'pekerja':
+    if user_role == 'Pekerja':
         query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Membayar transaksi jasa' AND nama != 'Menerima honor transaksi jasa'"
     else:
         query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Menerima honor transaksi jasa'"
@@ -487,8 +482,8 @@ def new_transaction(request):
         'kategori_transaksi': kategori_transaksi,   # menampilkan kategori transaksi yang dapat dilakukan
         'tanggal_transaksi': tanggal[0][0],
         'nama_bank': [bank[0] for bank in nama_bank],  # ambil nama bank
-        'role': role,
-        'linkfoto': linkfoto,
+        'user_role': user_role,
+        'link_foto': linkfoto,
     }
 
     if request.method == 'POST':

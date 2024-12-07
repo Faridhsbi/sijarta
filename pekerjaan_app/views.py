@@ -29,14 +29,11 @@ def execute_query(query, params=None):
 def show_pekerjaan(request):
     user_id = get_cookie(request, 'user_id')
     user_name = get_cookie(request, 'user_name')
-    role = execute_query("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
-    if role:
-        role = 'pekerja'
+    user_role = get_cookie(request, 'user_role')
+    linkfoto = ''
+    if user_role == 'Pekerja':
         linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
     else:
-        role = 'pengguna'
-
-    if role != 'pekerja':
         return redirect('main:show_main')
 
     query_kategori = '''
@@ -165,9 +162,9 @@ def show_pekerjaan(request):
         'user_id': user_id,
         'user_name': user_name,
         'kategori': kategori_dict,
-        'role': role,
+        'user_role': user_role,
         'pekerjaan': filtered_pekerjaan,
-        'likfoto': linkfoto,
+        'link_foto': linkfoto,
     }
 
     return render(request, 'pekerjaan.html', context)
@@ -228,14 +225,11 @@ def handle_kerjakan_pesanan(request):
 def show_status_pekerjaan(request):
     user_id = get_cookie(request, 'user_id')
     user_name = get_cookie(request, 'user_name')
-    role = execute_query("SELECT * FROM sijarta.pekerja WHERE id = %s", [user_id])
-    if role:
-        role = 'pekerja'
+    user_role = get_cookie(request, 'user_role')
+    linkfoto = ''
+    if user_role == 'Pekerja':
         linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
     else:
-        role = 'pengguna'
-
-    if role != 'pekerja':
         return redirect('main:show_main')
     
     status = execute_query('''
@@ -407,8 +401,8 @@ def show_status_pekerjaan(request):
     context = {
         'user_id': user_id,
         'user_name': user_name,
-        'role': role,
-        'likfoto': linkfoto,
+        'user_role': user_role,
+        'link_foto': linkfoto,
         'status_pekerjaan': status,
         'pekerjaan_selesai': pekerjaan_selesai,
         'pekerjaan_dibatalkan': pekerjaan_dibatalkan,

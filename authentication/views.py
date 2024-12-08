@@ -105,9 +105,13 @@ def login_view(request):
                 response.set_cookie('user_role', role)
                 return response
             else:
-                return redirect('authentication:login')
+                response = render(request, 'login.html', {'error': 'User Not Found!'})
+                set_message(response, f"Terjadi kesalahan", level="error")
+                return response
         else:
-            return redirect('authentication:login')
+            response = render(request, 'login.html', {'error': 'User Not Found!'})
+            set_message(response, f"Terjadi kesalahan", level="error")
+            return response
     return render(request, 'login.html')
 
 
@@ -124,7 +128,14 @@ def register_pengguna(request):
             no_hp = request.POST.get('no_hp')
             tgl_lahir = request.POST.get('tgl_lahir')
             alamat = request.POST.get('alamat')
+            
+            # Check if No. HP already exists in the database
+            query_check_hp = "SELECT COUNT(*) FROM SIJARTA.pengguna WHERE nohp = %s"
+            result_check = execute_query(query_check_hp, [no_hp])
 
+            if result_check[0][0] > 0:
+                raise ValueError
+            
             # Query untuk tabel pengguna dengan RETURNING
             query_pengguna = """
             INSERT INTO SIJARTA.pengguna (id, nama, pwd, jeniskelamin, nohp, tgllahir, alamat, saldomypay)
@@ -148,10 +159,12 @@ def register_pengguna(request):
             execute_query(query_pelanggan, params_pelanggan)
 
             return redirect('authentication:login')
-        except Exception as e:
-            print(f"Error: {e}")
-            response = render(request, 'user_register.html', {'error': 'Error registering user.'})
-            set_message(response, f"Terjadi kesalahan: {e}", level="error")
+        except ValueError as e:
+            # Trigger error message
+            response = render(request, 'user_register.html', {
+                'error': "No. HP sudah terdaftar. Anda akan diarahkan ke halaman login."
+            })
+            response['Refresh'] = '3; url=' + reverse('authentication:login') # Redirect to Login page
             return response
         
     return render(request, 'user_register.html')
@@ -171,6 +184,37 @@ def register_pekerja(request):
             nomor_rekening = request.POST.get('nomor_rekening')
             npwp = request.POST.get('npwp')
             link_foto = request.POST.get('link_foto')
+
+            # Check if No. HP already exists in the database
+            query_check_hp = "SELECT COUNT(*) FROM SIJARTA.pengguna WHERE nohp = %s"
+            result_check_hp = execute_query(query_check_hp, [no_hp])
+
+            if result_check_hp[0][0] > 0:
+                response = render(request, 'worker_register.html', {
+                    'error': "No. HP sudah terdaftar. Anda akan diarahkan ke halaman login."
+                })
+                response['Refresh'] = '5; url=' + reverse('authentication:login')
+                return response
+
+            # Check if NPWP already exists in the database
+            query_check_npwp = "SELECT COUNT(*) FROM SIJARTA.pekerja WHERE npwp = %s"
+            result_check_npwp = execute_query(query_check_npwp, [npwp])
+
+            if result_check_npwp[0][0] > 0:
+                return render(request, 'worker_register.html', {
+                    'error': "NPWP sudah terdaftar."
+                })
+
+            # Check if bank and account number combination is unique
+            query_check_bank_account = """
+            SELECT COUNT(*) FROM SIJARTA.pekerja 
+            WHERE namabank = %s AND nomorrekening = %s
+            """
+            result_check_bank_account = execute_query(query_check_bank_account, [nama_bank, nomor_rekening])
+
+            if result_check_bank_account[0][0] > 0:
+                raise ValueError
+
             query_user = """
             SET search_path TO SIJARTA;
             INSERT INTO SIJARTA.pengguna (id, nama, pwd, jeniskelamin, nohp, tgllahir, alamat, saldomypay)
@@ -178,18 +222,23 @@ def register_pekerja(request):
             """
             params_user = [nama, password, jenis_kelamin, no_hp, tgl_lahir, alamat]
             user_id = execute_query(query_user, params_user)[0][0]
+
+            # Insert into pekerja table
             query_pekerja = """
             INSERT INTO SIJARTA.pekerja (id, namabank, nomorrekening, npwp, linkfoto, rating, jmlpesananselesai)
             VALUES (%s, %s, %s, %s, %s, 0.0, 0)
             """
             params_pekerja = [user_id, nama_bank, nomor_rekening, npwp, link_foto]
             execute_query(query_pekerja, params_pekerja)
+
             return redirect('authentication:login')
-        except Exception as e:
+        except ValueError as e:
+            # Trigger Active
             print(f"Error: {e}")
-            response = render(request, 'worker_register.html', {'error': 'Error registering Worker.'})
-            set_message(response, f"Terjadi kesalahan: {e}", level="error")
-            return response
+            return render(request, 'worker_register.html', {
+                'error': "Nama Bank dan No. Rekening sudah terdaftar."
+            })
+
         
     return render(request, 'worker_register.html')
 

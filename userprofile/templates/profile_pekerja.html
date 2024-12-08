@@ -1,29 +1,101 @@
 {% extends 'base.html' %}
 {% block content %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
 {% include 'navbar.html' %}
-<div class="container mx-auto px-96 py-8 my-20">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Profil Pekerja</h1>
-        <div class="w-48 h-48 rounded-full overflow-hidden border-2 border-gray-300">
-            <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
+<div class="container mx-auto px-4 py-6 max-w-7xl mt-5">
+    <div class="mb-6 flex justify-between items-center">
+        <button onclick="window.history.back()" 
+                class="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-all duration-300 group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="font-medium">Back</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="relative h-56 bg-gradient-to-r from-blue-100 via-blue-50 to-white">
+            <div class="absolute -bottom-16 left-8 flex items-end gap-6">
+                <div class="w-32 h-32 rounded-2xl overflow-hidden border-4 border-white shadow-lg bg-white transform hover:scale-105 transition-transform duration-300">
+                    <img 
+                        src="{{ link_foto }}" 
+                        alt="Foto Profil" 
+                        class="w-full h-full object-cover object-center">
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-4 drop-shadow-sm">Profil Pekerja</h1>
+            </div>
+        </div>
+
+        <div class="mt-20 p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="transform hover:translate-x-2 transition-transform duration-300"> 
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-user text-blue-600 mr-2"></i>Nama:</h2>
+                        <p class="text-gray-900">{{ nama }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-phone-alt text-blue-600 mr-2"></i>No. HP:</h2>
+                        <p class="text-gray-900">{{ no_hp }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>Alamat:</h2>
+                        <p class="text-gray-900">{{ alamat }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-wallet text-blue-600 mr-2"></i>Saldo MyPay:</h2>
+                        <p class="text-gray-900">Rp. {{ saldo_mypay }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-id-card text-blue-600 mr-2"></i>NPWP:</h2>
+                        <p class="text-gray-900">{{ npwp }}</p>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-university text-blue-600 mr-2"></i>No. Rekening:</h2>
+                        <p class="text-gray-900">{{ nomor_rekening }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-star text-blue-600 mr-2"></i>Rating:</h2>
+                        <p class="text-gray-900">{{ rating }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-check-circle text-blue-600 mr-2"></i>Jumlah Pesanan Selesai:</h2>
+                        <p class="text-gray-900">{{ jml_pesanan_selesai }}</p>
+                    </div>
+                    <div class="transform hover:translate-x-2 transition-transform duration-300">
+                        
+                        <h2 class="text-lg font-semibold text-gray-800 mb-1"><i class="fas fa-briefcase text-blue-600 mr-2"></i>Kategori Pekerjaan:</h2>
+                        <div class="text-gray-900 space-y-1">
+                            {% if kategori_jasa %}
+                                {% for k in kategori_jasa %}
+                                <p>- {{ k }}</p>
+                                {% endfor %}
+                            {% else %}
+                                <p>Belum Memiliki Kategori Jasa :D</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <ul class="bg-white shadow-md rounded-lg p-6">
-        <li class="mb-4"><strong class="text-gray-700">Nama: </strong> <span class="text-gray-900">{{ nama }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Jenis Kelamin: </strong> <span class="text-gray-900">{{ jenis_kelamin }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">No. HP: </strong> <span class="text-gray-900">{{ no_hp }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Tanggal Lahir: </strong> <span class="text-gray-900">{{ tgl_lahir }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Alamat: </strong> <span class="text-gray-900">{{ alamat }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Saldo MyPay: </strong>Rp. <span class="text-gray-900">{{ saldo_mypay }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">NPWP: </strong> <span class="text-gray-900">{{ npwp }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">No. Rekening: </strong> <span class="text-gray-900">{{ nomor_rekening }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Rating: </strong> <span class="text-gray-900">{{ rating }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Jumlah Pesanan Selesai: </strong> <span class="text-gray-900">{{ jml_pesanan_selesai }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Kategori Pekerjaan: </strong> <span class="text-gray-900"></span></li>
-        {% for k in kategori_jasa %}
-            <li class="mb-4"><strong class="text-gray-700">- </strong> <span class="text-gray-900">{{ k }}</span></li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'userprofile:edit_profile_pekerja' %}" class="mt-6 inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Update Profil</a>
+
+    <div class="mt-12 text-center">
+        <a href="{% url 'userprofile:edit_profile_pekerja' %}" class="inline-block bg-blue-500 text-white font-semibold py-2 px-6 rounded hover:bg-blue-600 transition duration-200">
+            Update Profil
+        </a>
+    </div>
 </div>
+
+
 {% endblock %}

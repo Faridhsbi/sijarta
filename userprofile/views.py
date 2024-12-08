@@ -89,7 +89,7 @@ def show_profile_pekerja(request):
     kategori_jasa = execute_query(query_kategori_jasa, params)
     kategori_jasa_list = [item[0] for item in kategori_jasa]  # Ambil nilai dari tuple
     # kategori_jasa_str = ', '.join(kategori_jasa_list)  # Gabungkan menjadi satu string
-    print(kategori_jasa_list)
+    # print(kategori_jasa_list)
     # print(f"User ID from cookie: {user_id}")
     # print("Pengguna result:", result)
     # print("Pelanggan result:", result2)
@@ -184,7 +184,7 @@ def edit_profile_pekerja(request):
     kategori_jasa = execute_query(query_kategori_jasa, params)
     kategori_jasa_list = [item[0] for item in kategori_jasa]  # Ambil nilai dari tuple
     # kategori_jasa_str = ', '.join(kategori_jasa_list)  # Gabungkan menjadi satu string
-    print(kategori_jasa_list)
+    # print(kategori_jasa_list)
     # print(f"User ID from cookie: {user_id}")
     # print("Pengguna result:", result)
     # print("Pelanggan result:", result2)
@@ -204,6 +204,7 @@ def edit_profile_pekerja(request):
         'link_foto' : result2[0][4],
         'user_id' : user_id,
         'user_role': user_role,
+        'messages': 'success'
     }
 
     if request.method == 'POST':
@@ -231,82 +232,6 @@ def edit_profile_pekerja(request):
 
     return render(request, 'edit_profile_pekerja.html', context)
 
-
-
-def profile_view(request):
-    user = request.user
-    print(user.nama)  # Debug data pengguna
-    if user.role == 'pengguna':
-        # Load relasi Pengguna
-        pengguna = Pengguna.objects.select_related('id').get(id=user)
-        context = {
-            'saldo_mypay' : 350000,
-            'user': user,
-            'pengguna': pengguna,
-            'level': pengguna.level
-        }
-        return render(request, 'profile_pengguna.html', context)
-        
-    elif user.role == 'pekerja':
-        # Load relasi Pekerja
-        pekerja = Pekerja.objects.select_related('id').get(id=user)
-        context = {
-            'saldo_my_pay' : 2000000,
-            'user': user,
-            'pekerja': pekerja,
-            'nama_bank': pekerja.nama_bank,
-            'nomor_rekening': pekerja.nomor_rekening,
-            'npwp': pekerja.npwp,
-            'link_foto': pekerja.link_foto,
-            'rating': pekerja.rating + 3.5,
-            'jml_pesanan_selesai': pekerja.jml_pesanan_selesai + 2,
-            'kategori1' : "Deep Cleaning",
-            'kategori2' : "Home Cleaning",
-        }
-        return render(request, 'profile_pekerja.html', context)
-    else:
-        messages.error(request, "Role tidak dikenali.")
-        return redirect('home')
-
-def edit_profile_pengguna(request):
-    user = request.user
-    if user.role != 'pengguna':
-        messages.error(request, "Anda tidak memiliki izin untuk mengakses halaman ini.")
-        return redirect('profile')
-
-    if request.method == 'POST':
-        user.nama = request.POST.get('nama')
-        user.jenis_kelamin = request.POST.get('jenis_kelamin')
-        user.no_hp = request.POST.get('no_hp')
-        user.tgl_lahir = request.POST.get('tgl_lahir')
-        user.alamat = request.POST.get('alamat')
-        user.save()
-        messages.success(request, "Profil pengguna berhasil diperbarui.")
-        return redirect('userprofile:profile')
-
-    return render(request, 'edit_profile_pengguna.html', {'user': user})
-
-def edit_profile_pekerja(request):
-    user = request.user
-    if user.role != 'pekerja':
-        messages.error(request, "Anda tidak memiliki izin untuk mengakses halaman ini.")
-        return redirect('profile')
-
-    if request.method == 'POST':
-        user.nama = request.POST.get('nama')
-        user.jenis_kelamin = request.POST.get('jenis_kelamin')
-        user.no_hp = request.POST.get('no_hp')
-        user.tgl_lahir = request.POST.get('tgl_lahir')
-        user.alamat = request.POST.get('alamat')
-        user.nama_bank = request.POST.get('nama_bank')
-        user.nomor_rekening = request.POST.get('nomor_rekening')
-        user.npwp = request.POST.get('npwp')
-        user.link_foto = request.POST.get('link_foto')
-        user.save()
-        messages.success(request, "Profil pekerja berhasil diperbarui.")
-        return redirect('userprofile:profile')
-
-    return render(request, 'edit_profile_pekerja.html', {'user': user})
 
 # def show_mypay(request): # PLACEHOLDER
 #     # user = request.user

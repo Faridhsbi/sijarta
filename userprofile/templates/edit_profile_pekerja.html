@@ -68,10 +68,9 @@
         </div>
     </form>
     <!-- Pop-Up Container -->
-
     {% if messages %}
         {% for message in messages %}
-            {% if message.tags == "success" %}
+            {% if message == "success" %}
                 showPopup();
             {% endif %}
         {% endfor %}

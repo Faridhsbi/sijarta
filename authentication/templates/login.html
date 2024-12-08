@@ -33,26 +33,14 @@
         </button>
       </div>
     </form>
-
-    {% if messages %}
-    <div class="mt-4">
-      {% for message in messages %}
-        {% if message.tags == "success" %}
-          <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-              <span class="block sm:inline">{{ message }}</span>
-          </div>
-        {% elif message.tags == "error" %}
-          <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span class="block sm:inline">{{ message }}</span>
-          </div>
-        {% else %}
-          <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
-              <span class="block sm:inline">{{ message }}</span>
-          </div>
-        {% endif %}
-      {% endfor %}
+    {% if error %}
+      <div id="error-message" class="flex justify-center items-center">
+     <div class="text-center text-red-600 font-semibold bg-red-100 border border-red-400 rounded-md p-2 w-full max-w-xl transition-opacity duration-500" id="error-content">
+      {{ error }}
+     </div>
     </div>
     {% endif %}
+
 
     <div class="text-center mt-4">
       <p class="text-sm text-black">
@@ -64,13 +52,28 @@
     </div>
   </div>
 </div>
-
 <script>
+  setTimeout(function() {
+    var errorContent = document.getElementById('error-content');
+    if (errorContent) {
+      errorContent.style.opacity = '0'; 
+      setTimeout(function() {
+        var errorMessage = document.getElementById('error-message');
+        errorMessage.style.display = 'none';
+      }, 300);
+    }
+  }, 3000);
   setTimeout(() => {
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => alert.style.display = 'none');
-  }, 5000); // Hilangkan pesan setelah 5 detik
+  }, 3000); // Hilangkan pesan setelah 5 detik
 </script>
+
+<style>
+  #error-content {
+    opacity: 1;
+  }
+</style>
 {% endblock content %}
 
 

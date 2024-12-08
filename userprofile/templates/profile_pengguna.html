@@ -1,19 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 {% include 'navbar.html' %}
-<div class="my-20 container mx-auto px-96 py-8">
-     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Profil Pengguna</h1>
-    </div> 
-    <ul class="bg-white shadow-md rounded-lg p-6">
-        <li class="mb-4"><strong class="text-gray-700">Nama:</strong> <span class="text-gray-900">{{ nama }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Level:</strong> <span class="text-gray-900">{{ level }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Jenis Kelamin:</strong> <span class="text-gray-900">{{ jenis_kelamin }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">No. HP:</strong> <span class="text-gray-900">{{ no_hp }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Tanggal Lahir:</strong> <span class="text-gray-900">{{ tgl_lahir }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Alamat:</strong> <span class="text-gray-900">{{ alamat }}</span></li>
-        <li class="mb-4"><strong class="text-gray-700">Saldo MyPay:</strong> <span class="text-gray-900">{{ saldo_mypay }}</span></li>
-    </ul>
-    <a href="{% url 'userprofile:edit_profile_pengguna' %}" class="mt-6 inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Update Profil</a>
-</div> 
+<div class="font-roboto">
+  <div class="container mx-auto px-4 py-6 max-w-3xl my-24">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Profil Pengguna</h1>
+    </div>
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <div class="space-y-4">
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-user text-blue-600 mr-2"></i>Nama:</h2>
+          <p class="text-gray-900">{{ nama }}</p>
+        </div>
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-level-up-alt text-blue-600 mr-2"></i>Level:</h2>
+          <p class="text-gray-900">{{ level }}</p>
+        </div>
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-venus-mars text-blue-600 mr-2"></i>Jenis Kelamin:</h2>
+          <p class="text-gray-900">{{ jenis_kelamin }}</p>
+        </div>
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-phone text-blue-600 mr-2"></i>No. HP:</h2>
+          <p class="text-gray-900">{{ no_hp }}</p>
+        </div>
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-birthday-cake text-blue-600 mr-2"></i>Tanggal Lahir:</h2>
+          <p class="text-gray-900">{{ tgl_lahir }}</p>
+        </div>
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>Alamat:</h2>
+          <p class="text-gray-900">{{ alamat }}</p>
+        </div>
+        <div class="transform hover:translate-x-2 transition-transform duration-300">
+          <h2 class="text-lg font-semibold text-gray-700 mb-1"><i class="fas fa-wallet text-blue-600 mr-2"></i>Saldo MyPay:</h2>
+          <p class="text-gray-900">Rp. {{ saldo_mypay }}</p>
+        </div>
+      </div>
+    </div>
+    <a href="{% url 'userprofile:edit_profile_pengguna' %}" class="mt-6 inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">
+      Update Profil
+    </a>
+  </div>
+</div>
+
 {% endblock %}

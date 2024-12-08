@@ -31,11 +31,12 @@
     <br/><br/><br/><br/>
     <div class="container">
         <h1 class="mb-4">Form Testimoni</h1>
-        <form id="testimoni-form">
+        <form id="testimoni-form" method="POST" action="{% url 'testimoni:form_testimoni' pemesanan_id %}">
+            {% csrf_token %}
             <!-- Rating Input -->
             <div class="mb-3">
                 <label for="rating" class="form-label">Rating</label>
-                <select id="rating" class="form-select" required>
+                <select name="rating" id="rating" class="form-select" required>
                     <option value="" disabled selected>Select Rating (1-10)</option>
                     <!-- Dynamically generate the options -->
                     <script>
@@ -49,29 +50,18 @@
             <!-- Komentar Input -->
             <div class="mb-3">
                 <label for="komentar" class="form-label">Komentar</label>
-                <textarea id="komentar" class="form-control" rows="4" placeholder="Tuliskan komentar Anda..." required></textarea>
+                <textarea name="teks" id="komentar" class="form-control" rows="4" placeholder="Tuliskan komentar Anda..." required></textarea>
             </div>
+    
+            {% if error_msg %}
+            <div style="color: red; font-weight: bold; padding: 10px; border: 1px solid red; background-color: #f8d7da; border-radius: 5px; margin-bottom: 15px;">
+                {{ error_msg }}
+            </div>
+            {% endif %}
             
             <!-- Submit Button -->
-            <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
-        <div id="success-message" class="alert alert-success mt-3" style="display: none;">
-            Testimoni Anda berhasil disubmit! Terima kasih.
-        </div>
     </div>
-
-    <script>
-        function submitForm() {
-            const rating = document.getElementById("rating").value;
-            const komentar = document.getElementById("komentar").value;
-
-            if (rating && komentar) {
-                // Simulate form submission success
-                document.getElementById("success-message").style.display = "block";
-                document.getElementById("testimoni-form").reset();
-            } else {
-                alert("Harap isi semua kolom sebelum mengirim.");
-            }
-        }
-    </script>
+    
 {% endblock %}

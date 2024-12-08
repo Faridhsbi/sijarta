@@ -382,7 +382,7 @@ def show_mypay(request):
         'saldo_mypay': saldo_mypay,
         'transactions': transactions,
         'user_id': user_id,
-        'user_name': user_name,
+        'nama': user_name,
         'user_role': user_role,
         'link_foto': linkfoto,
     }
@@ -477,7 +477,7 @@ def new_transaction(request):
     context = {
         'pemesanan_jasa': json.dumps(pemesanan_jasa),  
         'user_id': user_id,
-        'user_name': user_name,
+        'nama': user_name,
         'saldo_mypay': saldo_mypay,
         'kategori_transaksi': kategori_transaksi,   # menampilkan kategori transaksi yang dapat dilakukan
         'tanggal_transaksi': tanggal[0][0],

@@ -186,11 +186,13 @@ def show_mypay(request): # PLACEHOLDER
     transaksi3 = {'nominal': 15000, 'tanggal': '12-12-2024', 'kategori': 'TopUp MyPay'}
 
     context = {
-        'no_hp' : '0857111',
-        'saldo_mypay' : 200000,
-        'transaksi1' : transaksi1,
-        'transaksi2' : transaksi2,
-        'transaksi3' : transaksi3,
+        'no_hp': no_hp,
+        'saldo_mypay': saldo_mypay,
+        'transactions': transactions,
+        'user_id': user_id,
+        'nama': user_name,
+        'user_role': user_role,
+        'link_foto': linkfoto,
     }
 
     return render(request, 'mypay.html', context)
@@ -207,11 +209,15 @@ def new_transaction(request): # PLACEHOLDER
     jasa7 = {'id': 7, 'kategori': 'Massage', 'subkategori': 'Arm massage', 'total_biaya': 300000}
 
     context = {
-        'nama' : 'Budi',
-        'tanggal_transaksi' : '20-10-2024',
-        'saldo_mypay' : 200000,
-        'kategori': ['Membayar Pemesanan Jasa', 'TopUp MyPay', 'Transfer MyPay', 'Withdrawal'],
-        'jasa' : [jasa1, jasa2, jasa3, jasa4, jasa5, jasa6, jasa7],
+        'pemesanan_jasa': json.dumps(pemesanan_jasa),  
+        'user_id': user_id,
+        'nama': user_name,
+        'saldo_mypay': saldo_mypay,
+        'kategori_transaksi': kategori_transaksi,   # menampilkan kategori transaksi yang dapat dilakukan
+        'tanggal_transaksi': tanggal[0][0],
+        'nama_bank': [bank[0] for bank in nama_bank],  # ambil nama bank
+        'user_role': user_role,
+        'link_foto': linkfoto,
     }
     # if request.method == 'POST':
     # dll.. dari form

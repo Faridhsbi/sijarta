@@ -176,3 +176,21 @@ FOR EACH ROW
 EXECUTE FUNCTION validate_voucher_trigger();
 
 -- Trigger 4
+CREATE OR REPLACE FUNCTION pengiriman_nominal_jasa()
+RETURNS TRIGGER AS $$
+BEGIN
+IF (NEW.IdStatus = (SELECT Id FROM STATUS_PESANAN WHERE Status = 'Selesai')) THEN
+INSERT INTO TR_MYPAY
+VALUES (uuid_generate_v4(), (SELECT IdPekerja FROM TR_PEMESANAN_JASA WHERE Id = NEW.IdTrPemesanan), CURRENT_DATE, (SELECT TotalBiaya FROM TR_PEMESANAN_JASA WHERE Id = NEW.IdTrPemesanan), (SELECT Id FROM KATEGORI_TR_MYPAY WHERE Nama ='Menerima honor transaksi jasa'));
+UPDATE PENGGUNA
+SET SaldoMyPay = SaldoMyPay + (SELECT TotalBiaya FROM TR_PEMESANAN_JASA WHERE Id = NEW.IdTrPemesanan)
+WHERE Pengguna.Id = (SELECT IdPekerja FROM TR_PEMESANAN_JASA WHERE Id = NEW.IdTrPemesanan);
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER add_balance_pekerja
+BEFORE INSERT ON TR_PEMESANAN_STATUS
+FOR EACH ROW EXECUTE FUNCTION pengiriman_nominal_jasa();
+-- status pesanan berubah melalui insert riwayat statusnya

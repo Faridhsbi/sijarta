@@ -8,66 +8,74 @@
         
         <div class="mb-4">
             <label for="nama" class="block text-gray-700 font-semibold mb-2">Nama:</label>
-            <input type="text" name="nama" value="{{ user.nama }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" name="nama" value="{{ nama }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="jenis_kelamin" class="block text-gray-700 font-semibold mb-2">Jenis Kelamin:</label>
             <select name="jenis_kelamin" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="L" {% if user.jenis_kelamin == 'L' %}selected{% endif %}>Laki-laki</option>
-                <option value="P" {% if user.jenis_kelamin == 'P' %}selected{% endif %}>Perempuan</option>
+                <option value="L" {% if jenis_kelamin == 'L' %}selected{% endif %}>Laki-laki</option>
+                <option value="P" {% if jenis_kelamin == 'P' %}selected{% endif %}>Perempuan</option>
             </select>
         </div>
 
         <div class="mb-4">
             <label for="no_hp" class="block text-gray-700 font-semibold mb-2">No. HP:</label>
-            <input type="text" name="no_hp" value="{{ user.no_hp }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" name="no_hp" value="{{ no_hp }}" required class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="tgl_lahir" class="block text-gray-700 font-semibold mb-2">Tanggal Lahir:</label>
-            <input type="date" name="tgl_lahir" value="{{ user.tgl_lahir }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="date" name="tgl_lahir" value="{{ tgl_lahir }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="alamat" class="block text-gray-700 font-semibold mb-2">Alamat:</label>
-            <input type="text" name="alamat" value="{{ user.alamat }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" name="alamat" value="{{ alamat }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="nama_bank" class="block text-gray-700 font-semibold mb-2">Nama Bank:</label>
             <select name="nama_bank" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="GoPay" {% if user.nama_bank == 'GoPay' %}selected{% endif %}>GoPay</option>
-                <option value="OVO" {% if user.nama_bank == 'OVO' %}selected{% endif %}>OVO</option>
-                <option value="VA_BCA" {% if user.nama_bank == 'VA_BCA' %}selected{% endif %}>Virtual Account BCA</option>
-                <option value="VA_BNI" {% if user.nama_bank == 'VA_BNI' %}selected{% endif %}>Virtual Account BNI</option>
-                <option value="VA_Mandiri" {% if user.nama_bank == 'VA_Mandiri' %}selected{% endif %}>Virtual Account Mandiri</option>
+                <option value="GoPay" {% if nama_bank == 'GoPay' %}selected{% endif %}>GoPay</option>
+                <option value="OVO" {% if nama_bank == 'OVO' %}selected{% endif %}>OVO</option>
+                <option value="VA_BCA" {% if nama_bank == 'VA_BCA' %}selected{% endif %}>Virtual Account BCA</option>
+                <option value="VA_BNI" {% if nama_bank == 'VA_BNI' %}selected{% endif %}>Virtual Account BNI</option>
+                <option value="VA_Mandiri" {% if nama_bank == 'VA_Mandiri' %}selected{% endif %}>Virtual Account Mandiri</option>
             </select>
         </div>
 
         <div class="mb-4">
             <label for="nomor_rekening" class="block text-gray-700 font-semibold mb-2">Nomor Rekening:</label>
-            <input type="text" name="nomor_rekening" value="{{ user.nomor_rekening }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" name="nomor_rekening" value="{{ nomor_rekening }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="npwp" class="block text-gray-700 font-semibold mb-2">NPWP:</label>
-            <input type="text" name="npwp" value="{{ user.npwp }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 ```html
+            <input type="text" name="npwp" value="{{ npwp }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 ```html
             focus:ring-blue-500">
         </div>
 
         <div class="mb-4">
             <label for="link_foto" class="block text-gray-700 font-semibold mb-2">Link Foto:</label>
-            <input type="text" name="link_foto" value="{{ user.link_foto }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" name="link_foto" value="{{ link_foto }}" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
             <!-- Tombol -->
         <div class="flex items-center justify-between mt-4">
             <button type="submit" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-200">Simpan</button>
-            <a href="{% url 'userprofile:profile' %}" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded hover:bg-gray-600 transition duration-200">Kembali</a>
+            <a href="{% url 'userprofile:show_pekerja' %}" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded hover:bg-gray-600 transition duration-200">Kembali</a>
         </div>
     </form>
     <!-- Pop-Up Container -->
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "success" %}
+                showPopup();
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     <div id="popupSuccess" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-lg p-6 w-1/3">
             <h2 class="text-green-700 text-xl font-bold mb-4">Berhasil!</h2>
@@ -94,14 +102,7 @@
         closePopup();
     }, 5000); // Pop-up otomatis tertutup setelah 5 detik
 
-    // Cek jika ada pesan sukses
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == "success" %}
-                showPopup();
-            {% endif %}
-        {% endfor %}
-    {% endif %}
+
 </script>
 
 {% endblock %}

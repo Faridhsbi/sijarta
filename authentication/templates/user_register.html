@@ -53,13 +53,11 @@
       </div>
     </form>
 
-    {% if messages %}
-    <div class="mt-4">
-      {% for message in messages %}
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <span class="block sm:inline">{{ message }}</span>
+    {% if error %}
+    <div class="flex justify-center items-center mt-6">
+      <div class="text-center text-red-600 font-semibold bg-red-100 border border-red-400 rounded-md p-4 w-full max-w-md">
+        {{ error }}
       </div>
-      {% endfor %}
     </div>
     {% endif %}
 

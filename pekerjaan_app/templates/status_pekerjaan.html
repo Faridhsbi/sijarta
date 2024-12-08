@@ -8,107 +8,145 @@
             <label for="status" class="block text-gray-700 font-semibold mb-2">Status Pemesanan:</label>
             <select id="status" name="status" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="" disabled selected>Pilih Status</option>
-                <option value="Menunggu Pekerja Berangkat">Menunggu Pekerja Berangkat</option>
-                <option value="Pekerja Tiba Di Lokasi">Pekerja Tiba Di Lokasi</option>
-                <option value="Pelayanan Jasa Sedang Dilakukan">Pelayanan Jasa Sedang Dilakukan</option>
-                <option value="Pesanan Selesai">Pesanan Selesai</option>
-                <option value="Pesanan Dibatalkan">Pesanan Dibatalkan</option>
+                {% for status in status_pekerjaan %}
+                <option value="{{ status.0 }}">{{ status.0 }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="mb-4">
-            <label for="kategori" class="block text-gray-700 font-semibold mb-2">Nama Kategori/Subkategori Jasa:</label>
+            <label for="kategori" class="block text-gray-700 font-semibold mb-2">Nama Subkategori Jasa:</label>
             <input type="text" id="kategori" name="kategori" class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <button onclick="filterPekerjaan()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300">Search</button>
     </div>
 
+    {% if pekerjaan_selesai %}
     <div class="mt-6">
-        <h2 class="text-xl font-semibold mb-4">Daftar Pekerjaan</h2>
-        <div id="pekerjaan-list" class="bg-white shadow-md rounded-lg p-6">
-            {% for pekerjaan in pekerjaan %}
+        <div id="pekerjaan-selesai-list" class="bg-white shadow-md rounded-lg p-6">
+            {% for pekerjaan in pekerjaan_selesai %}
             <div class="border-b py-4 grid grid-cols-12 gap-4 items-center">
                 <div class="col-span-6">
-                    <p><strong>Subkategori:</strong> {{ pekerjaan.subkategori }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.nama_pelanggan }}</p>
-                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.tanggal_pemesanan }} | <strong>Tanggal Pekerjaan:</strong> {{ pekerjaan.tanggal_pekerjaan }}</p>
-                    <p><strong>Status:</strong> <span id="status-{{ pekerjaan.id }}">{{ pekerjaan.status }}</span></p>
+                    <p><strong>Subkategori:</strong> {{ pekerjaan.1 }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.2 }}</p>
+                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.5 }} | <strong>Tanggal Pekerjaan:</strong> {{ pekerjaan.6 }}</p>
+                    <p><strong>Status:</strong> <span id="status-{{ pekerjaan.0 }}">{{ pekerjaan.7 }}</span></p>
                 </div>
                 <div class="col-span-3">
-                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.total_biaya }}</p>
-                </div>
-                <div class="col-span-3" id="button-container-{{ pekerjaan.id }}">
-                    {% if pekerjaan.status == "Menunggu Pekerja Berangkat" %}
-                    <button onclick="updateStatus('{{ pekerjaan.id }}', 'Pekerja Tiba Di Lokasi')" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 transition duration-300">Tiba Di Lokasi</button>
-                    {% elif pekerjaan.status == "Pekerja Tiba Di Lokasi" %}
-                    <button onclick="updateStatus('{{ pekerjaan.id }}', 'Pelayanan Jasa Sedang Dilakukan')" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-700 transition duration-300">Melakukan Pelayanan Jasa</button>
-                    {% elif pekerjaan.status == "Pelayanan Jasa Sedang Dilakukan" %}
-                    <button onclick="updateStatus('{{ pekerjaan.id }}', 'Pesanan Selesai')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Selesai Melakukan Pelayanan</button>
-                    {% endif %}
+                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.4 }}</p>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+    {% endif %}
+
+    {% if pekerjaan_dibatalkan %}
+    <div class="mt-6">
+        <div id="pekerjaan-dibatalkan-list" class="bg-white shadow-md rounded-lg p-6">
+            {% for pekerjaan in pekerjaan_dibatalkan %}
+            <div class="border-b py-4 grid grid-cols-12 gap-4 items-center">
+                <div class="col-span-6">
+                    <p><strong>Subkategori:</strong> {{ pekerjaan.1 }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.2 }}</p>
+                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.5 }} | <strong>Tanggal Pekerjaan:</strong> {{ pekerjaan.6 }}</p>
+                    <p><strong>Status:</strong> <span id="status-{{ pekerjaan.0 }}">{{ pekerjaan.7 }}</span></p>
+                </div>
+                <div class="col-span-3">
+                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.4 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if pekerjaan_sedang_dikerjakan %}
+    <div class="mt-6">
+        <div id="pekerjaan-sedang-dikerjakan-list" class="bg-white shadow-md rounded-lg p-6">
+            {% for pekerjaan in pekerjaan_sedang_dikerjakan %}
+            <div class="border-b py-4 grid grid-cols-12 gap-4 items-center">
+                <div class="col-span-6">
+                    <p><strong>Subkategori:</strong> {{ pekerjaan.1 }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.2 }}</p>
+                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.5 }} | <strong>Tanggal Pekerjaan:</strong> {{ pekerjaan.6 }}</p>
+                    <p><strong>Status:</strong> <span id="status-{{ pekerjaan.0 }}">{{ pekerjaan.7 }}</span></p>
+                </div>
+                <div class="col-span-3">
+                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.4 }}</p>
+                </div>
+                <div class="col-span-3" id="button-container-{{ pekerjaan.0 }}">
+                    <button onclick="updateStatus('{{ pekerjaan.0 }}', 'Selesai')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Selesai Melakukan Pelayanan</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if pekerjaan_menunggu_pekerja %}
+    <div class="mt-6">
+        <div id="pekerjaan-menunggu-pekerja-list" class="bg-white shadow-md rounded-lg p-6">
+            {% for pekerjaan in pekerjaan_menunggu_pekerja %}
+            <div class="border-b py-4 grid grid-cols-12 gap-4 items-center">
+                <div class="col-span-6">
+                    <p><strong>Subkategori:</strong> {{ pekerjaan.1 }} | <strong>Nama Pelanggan:</strong> {{ pekerjaan.2 }}</p>
+                    <p><strong>Tanggal Pemesanan:</strong> {{ pekerjaan.5 }} | <strong>Tanggal Pekerjaan:</strong> {{ pekerjaan.6 }}</p>
+                    <p><strong>Status:</strong> <span id="status-{{ pekerjaan.0 }}">{{ pekerjaan.7 }}</span></p>
+                </div>
+                <div class="col-span-3">
+                    <p><strong>Total Biaya:</strong> Rp {{ pekerjaan.4 }}</p>
+                </div>
+                <div class="col-span-3" id="button-container-{{ pekerjaan.0 }}">
+                    <button onclick="updateStatus('{{ pekerjaan.0 }}', 'Sedang Dikerjakan')" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 transition duration-300">Tiba Di Lokasi</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
 <script>
-    const pekerjaanData = {{ pekerjaan|safe }};
-// PLACEHOLDER SEBELUM PAKE SQL QUERY
-    function filterPekerjaan() { 
+    function filterPekerjaan() {
         const status = document.getElementById('status').value;
-        const kategori = document.getElementById('kategori').value.toLowerCase();
-        const pekerjaanList = document.getElementById('pekerjaan-list');
-        pekerjaanList.innerHTML = '';
+        const kategori = document.getElementById('kategori').value;
 
-        const filteredPekerjaan = pekerjaanData.filter(pekerjaan => {
-            return (status === '' || pekerjaan.status === status) &&
-                   (kategori === '' || pekerjaan.kategori.toLowerCase().includes(kategori) || pekerjaan.subkategori.toLowerCase().includes(kategori));
-        });
+        const url = new URL(window.location.href);
+        url.searchParams.set('status', status);
+        url.searchParams.set('kategori', kategori);
 
-        filteredPekerjaan.forEach(pekerjaan => {
-            const pekerjaanDiv = document.createElement('div');
-            pekerjaanDiv.classList.add('border-b', 'py-4', 'grid', 'grid-cols-12', 'gap-4', 'items-center');
-            pekerjaanDiv.innerHTML = `
-                <div class="col-span-6">
-                    <p><strong>Subkategori:</strong> ${pekerjaan.subkategori} | <strong>Nama Pelanggan:</strong> ${pekerjaan.nama_pelanggan}</p>
-                    <p><strong>Tanggal Pemesanan:</strong> ${pekerjaan.tanggal_pemesanan} | <strong>Tanggal Pekerjaan:</strong> ${pekerjaan.tanggal_pekerjaan}</p>
-                    <p><strong>Status:</strong> <span id="status-${pekerjaan.id}">${pekerjaan.status}</span></p>
-                </div>
-                <div class="col-span-3">
-                    <p><strong>Total Biaya:</strong> Rp ${pekerjaan.total_biaya}</p>
-                </div>
-                <div class="col-span-3" id="button-container-${pekerjaan.id}">
-                    ${getStatusButton(pekerjaan)}
-                </div>
-            `;
-            pekerjaanList.appendChild(pekerjaanDiv);
-        });
-    }
-
-    function getStatusButton(pekerjaan) {
-        if (pekerjaan.status === "Menunggu Pekerja Berangkat") {
-            return `<button onclick="updateStatus('${pekerjaan.id}', 'Pekerja Tiba Di Lokasi')" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700 transition duration-300">Tiba Di Lokasi</button>`;
-        } else if (pekerjaan.status === "Pekerja Tiba Di Lokasi") {
-            return `<button onclick="updateStatus('${pekerjaan.id}', 'Pelayanan Jasa Sedang Dilakukan')" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-700 transition duration-300">Melakukan Pelayanan Jasa</button>`;
-        } else if (pekerjaan.status === "Pelayanan Jasa Sedang Dilakukan") {
-            return `<button onclick="updateStatus('${pekerjaan.id}', 'Pesanan Selesai')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Selesai Melakukan Pelayanan</button>`;
-        } else {
-            return '';
-        }
+        window.location.href = url; // Navigate with the updated query parameters
     }
 
     function updateStatus(pekerjaanId, newStatus) {
-        const statusElement = document.getElementById(`status-${pekerjaanId}`);
-        const buttonContainer = document.getElementById(`button-container-${pekerjaanId}`);
+        // Create a form dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "pekerjaan_app:handle_update_status" %}';  // Replace with your URL
 
-        statusElement.textContent = newStatus;
+        // Add CSRF token
+        const csrfToken = '{{ csrf_token }}';
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
 
-        if (newStatus === 'Pekerja Tiba Di Lokasi') {
-            buttonContainer.innerHTML = `<button onclick="updateStatus('${pekerjaanId}', 'Pelayanan Jasa Sedang Dilakukan')" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-700 transition duration-300">Melakukan Pelayanan Jasa</button>`;
-        } else if (newStatus === 'Pelayanan Jasa Sedang Dilakukan') {
-            buttonContainer.innerHTML = `<button onclick="updateStatus('${pekerjaanId}', 'Pesanan Selesai')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Selesai Melakukan Pelayanan</button>`;
-        } else if (newStatus === 'Pesanan Selesai') {
-            buttonContainer.innerHTML = '';
-        }
+        // Add pekerjaan ID
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'pekerjaan_id';
+        idInput.value = pekerjaanId;
+        form.appendChild(idInput);
+
+        // Add new status
+        const statusInput = document.createElement('input');
+        statusInput.type = 'hidden';
+        statusInput.name = 'new_status';
+        statusInput.value = newStatus;
+        form.appendChild(statusInput);
+
+        // Append the form to the body and submit it
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
 {% endblock %}

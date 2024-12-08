@@ -160,7 +160,7 @@ def show_pekerjaan(request):
         print(filtered_pekerjaan)
     context = {
         'user_id': user_id,
-        'user_name': user_name,
+        'nama': user_name,
         'kategori': kategori_dict,
         'user_role': user_role,
         'pekerjaan': filtered_pekerjaan,
@@ -400,7 +400,7 @@ def show_status_pekerjaan(request):
 
     context = {
         'user_id': user_id,
-        'user_name': user_name,
+        'nama': user_name,
         'user_role': user_role,
         'link_foto': linkfoto,
         'status_pekerjaan': status,

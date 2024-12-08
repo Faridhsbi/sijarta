@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from os import getenv
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -105,9 +105,9 @@ WSGI_APPLICATION = 'sijarta.wsgi.application'
 #     }
 # }
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 pw = os.getenv("SUPABASE_PASSWORD")
 host = os.getenv("SUPABASE_HOST")
 username = os.getenv("SUPABASE_USERNAME")

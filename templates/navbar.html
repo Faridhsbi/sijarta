@@ -19,7 +19,7 @@
                             <img src="{{ link_foto }}" alt="Foto Profil" class="w-full h-full object-cover">
                         </div> {% endcomment %}
                     {% elif user_role == "Pekerja" %}
-                        <a href="" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300 ">Homepage</a>
+                        <a href="{% url 'main:show_main' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300 ">Homepage</a>
                         <a href="{% url 'pekerjaan_app:show_pekerjaan' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Pekerjaan Saya</a>
                         <a href="{% url 'pekerjaan_app:show_status_pekerjaan' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">Kelola Status Pekerjaan</a>
                         <a href="{% url 'userprofile:show_mypay' %}" class="text-white hover:bg-blue-700 px-4 py-2 rounded transition duration-300">MyPay</a>

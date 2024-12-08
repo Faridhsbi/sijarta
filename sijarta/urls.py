@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', include('main.urls')),
     # path('admin/', admin.site.urls),
-    path('discount/', include('diskon.urls')),
+    path('diskon/', include('diskon.urls')),
     path('testimoni/', include('testimoni.urls')), # buat test doang, nanti kalo udah ada view pesanan jasa apus aja
     path('auth/', include('authentication.urls')),
     path('profile/', include('userprofile.urls')),

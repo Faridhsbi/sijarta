@@ -436,9 +436,9 @@ def new_transaction(request):
 
     # Fetch kategori transaksi
     if user_role == 'Pekerja':
-        query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Membayar transaksi jasa' AND nama != 'Menerima honor transaksi jasa'"
+        query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Membayar transaksi jasa' AND nama != 'Menerima honor transaksi jasa' AND nama != 'Membeli voucher'"
     else:
-        query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Menerima honor transaksi jasa'"
+        query_kategori_transaksi = "SELECT id, nama FROM sijarta.kategori_tr_mypay WHERE nama != 'Menerima honor transaksi jasa' AND nama != 'Membeli voucher'"
     kategori_transaksi = execute_query(query_kategori_transaksi)
 
     # Fetch jasa

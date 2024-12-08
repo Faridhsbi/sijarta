@@ -72,10 +72,65 @@
             font-size: 18px; /* Perbesar ukuran font */
             margin: 10px 0; /* Spasi atas dan bawah */
         }
+
+        .testimonials {
+        width: 90%;
+        margin: 0 auto;
+        }
+
+/* Add custom width for the testimonial wrapper */
+.testimonial-wrapper {
+    width: 100%;  /* Ensure full width */
+    max-width: 1200px; /* Optional: Add a max-width */
+    margin: 0 auto; /* Optional: Center the wrapper */
+    padding: 40px 20px; /* Optional: Add padding */
+}
+
+.testimonial-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.testimonial-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    flex: 1 1 calc(33.333% - 20px); /* 3 items per row */
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .testimonial-item {
+        flex: 1 1 calc(50% - 20px); /* 2 items per row on small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonial-item {
+        flex: 1 1 100%; /* 1 item per row on very small screens */
+    }
+}
+
+
+.testimonial-item:hover {
+    transform: translateY(-5px);
+}
+
+.testimonial-item p {
+    margin: 5px 0;
+}
+
+.testimonial-item strong {
+    color: #333;
+}
     </style>
 </head>
-<div class="my-20 container mx-auto px-96 py-8">
+
 <body>
+<div class="my-20 container mx-auto px-96 py-8">
     <h1>Cleaning Service</h1>
     <div class="container">
         <div class="details">
@@ -107,27 +162,30 @@
             <button>Gabung!</button>
         </div>
         
-        <div class="testimonials">
-            <h2>Testimoni</h2>
-            <div class="testimonial-item">
-                <p><strong>Pengguna:</strong> Andi</p>
-                <p><strong>Tanggal:</strong> 2024-11-01</p>
-                <p><strong>Pekerja:</strong> Budi</p>
-                <p><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
-                <p>"Layanan sangat memuaskan!"</p>
-            </div>
-            <div class="testimonial-item">
-                <p><strong>Pengguna:</strong> Rina</p>
-                <p><strong>Tanggal:</strong> 2024-11-02</p>
-                <p><strong>Pekerja:</strong> Siti</p>
-                <p><strong>Rating:</strong> ⭐⭐⭐⭐</p>
-                <p>"Hasil bersih dan pekerjanya ramah."</p>
-            </div>
-        </div>
+        
     </div>
-</body>
+
 </div>
 
+<div class="testimonials">
+    <h2>Testimoni</h2>
+    <br/>
+    <div class="testimonial-wrapper">
+        <div class="testimonial-grid">
+            {% for testimoni in testimoni_all %}
+            <div class="testimonial-item">
+                <p><strong>Pengguna:</strong> {{ testimoni.nama_pelanggan }}</p>
+                <p><strong>Jenis jasa:</strong> {{ testimoni.nama_jasa }}</p>
+                <p><strong>Tanggal:</strong> {{ testimoni.tanggal }}</p>
+                <p><strong>Pekerja:</strong> {{ testimoni.nama_pekerja }}</p>
+                <p><strong>Rating:</strong> {{ testimoni.stars }}</p>
+                <p>{{ testimoni.review }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</body>
 <!-- Modal untuk Pekerja -->
 <div class="modal fade" id="workerModalBudi" tabindex="-1" aria-labelledby="workerModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">

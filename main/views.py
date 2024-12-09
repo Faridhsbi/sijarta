@@ -270,7 +270,11 @@ ORDER BY
     check_have_testimoni = "SELECT trpj.id FROM sijarta.testimoni t JOIN sijarta.tr_pemesanan_jasa trpj ON t.idTrPemesanan = trpj.id where trpj.idPelanggan = %s"
     pemesanan_data = execute_query(pemesanan_query, [user_id])
 
-    have_testimoni = execute_query(check_have_testimoni, [user_id])[0]
+    have_testimoni = []
+    try:
+        have_testimoni = execute_query(check_have_testimoni, [user_id])[0]
+    except:
+        have_testimoni = []
     print(have_testimoni)
 
     context = {
@@ -328,6 +332,8 @@ def create_pemesanan(request):
         order_date = data.get("order_date")
         discount_code = data.get("discount_code")
         payment_method = data.get("payment_method")
+        subcategory_id = data.get("subcategory_id")
+        sesi_ke = data.get("sesi")
 
         print(payment_method)
 
@@ -368,8 +374,8 @@ def create_pemesanan(request):
             order_date,
             total_price,
             user_id,
-            request.POST.get("subcategoryid"),  # Ambil ID subkategori dari data form
-            request.POST.get("sesi"),
+            subcategory_id,  # Ambil ID subkategori dari data form
+            sesi_ke,
             discount_id if discount_id else None,
             payment_method_id
         ])
@@ -388,6 +394,27 @@ def create_pemesanan(request):
         return JsonResponse({"success": "Pemesanan berhasil dibuat"})
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
+    
+def cancel_pemesanan(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        pemesanan_id = data.get("pemesanan_id")
+
+        if not pemesanan_id:
+            return JsonResponse({"error": "Invalid data"}, status=400)
+
+        # Update status menjadi "Dibatalkan"
+        update_status_query = """
+        UPDATE sijarta.tr_pemesanan_status
+        SET IdStatus = (SELECT Id FROM sijarta.status_pesanan WHERE Status = 'Dibatalkan')
+        WHERE Idtrpemesanan = %s
+        """
+        execute_query(update_status_query, [pemesanan_id])
+
+        return JsonResponse({"success": "Pemesanan berhasil dibatalkan"})
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
 
 
 

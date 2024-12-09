@@ -140,7 +140,7 @@
                         {% elif pesanan.status == "Mencari Pekerja" %}
                         <button class="btn-red">Batalkan</button>
                         {% elif pesanan.status == "Menunggu Pembayaran" %}
-                        <button class="btn-red">Batalkan</button>
+                        <button class="btn-red" onclick="cancelOrder('{{ pesanan.pemesanan_id }}')">Batalkan</button>
                         {% endif %}
                     </td>
                 </tr>
@@ -155,4 +155,32 @@
     
 </body>
 </div>
+
+<script>
+    function cancelOrder(pemesananId) {
+        if (confirm("Apakah Anda yakin ingin membatalkan pemesanan ini?")) {
+            fetch("{% url 'main:cancel_pemesanan' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ pemesanan_id: pemesananId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Pemesanan berhasil dibatalkan!");
+                    location.reload(); // Refresh halaman untuk menampilkan perubahan
+                } else {
+                    alert("Gagal membatalkan pemesanan: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    }
+</script>
+
 {% endblock %}

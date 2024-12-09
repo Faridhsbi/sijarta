@@ -44,7 +44,12 @@ def show_pekerjaan(request):
     WHERE pkj.pekerjaid = %s)
     '''
     kategori = execute_query(query_kategori, [user_id])
-
+    print(kategori)
+    if (len(kategori) == 0):
+        response = redirect('main:show_main')
+        response.set_cookie('message', 'Anda belum memiliki kategori jasa yang dapat dikerjakan.', max_age=5)
+        return response
+    
     query_subkategori = '''
     SELECT skj.id, skj.namasubkategori, skj.kategorijasaid, kj.id, kj.namakategori
     FROM sijarta.subkategori_jasa skj

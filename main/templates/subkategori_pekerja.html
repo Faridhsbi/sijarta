@@ -140,7 +140,14 @@
         </div>
 
         <div class="join-section">
-            <button>Gabung!</button>
+            {% if not is_joined %}
+            <form method="POST" action="{% url 'main:join' subcategoryid %}">
+                {% csrf_token %}
+                <button type="submit">Gabung!</button>
+            </form>
+            {% else %}
+            <p>Anda sudah tergabung dalam subkategori ini.</p>
+            {% endif %}
         </div>
         
         <div class="testimonials">

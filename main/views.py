@@ -33,31 +33,65 @@ def execute_query(query, params=None):
 
 
 # @login_required(login_url='/auth')
+from django.shortcuts import render, redirect
+
 def show_main(request):
     user_id = get_cookie(request, 'user_id')
-    user_role = get_user_role(user_id)
     if not user_id:
         return redirect('/auth/')
+    
+    user_role = get_user_role(user_id)
     user_name = None
     if user_id:
-        query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
-        params = [user_id]
-        result = execute_query(query, params)
-        if result:
-            user_name = result[0][0]
-    
+        # Fetch user's name
+        user_query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
+        user_result = execute_query(user_query, [user_id])
+        if user_result:
+            user_name = user_result[0][0]
+
     linkfoto = ''
     if user_role == 'Pekerja':
-        linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
+        # Fetch photo link for workers
+        foto_query = "SELECT linkfoto FROM sijarta.pekerja WHERE id = %s"
+        foto_result = execute_query(foto_query, [user_id])
+        if foto_result:
+            linkfoto = foto_result[0][0]
 
+    # Fetch categories and their subcategories
+    categories_query = "SELECT id, namakategori FROM sijarta.kategori_jasa"
+    categories = execute_query(categories_query)
+    subcategories_query = "SELECT id, namasubkategori, kategorijasaid FROM sijarta.subkategori_jasa"
+    subcategories = execute_query(subcategories_query)
+
+    # Organize subcategories by their parent category
+    subcategories_by_category = {}
+    for subcategory in subcategories:
+        category_list = subcategories_by_category.setdefault(subcategory[2], [])
+        category_list.append({
+            "id": subcategory[0],
+            "name": subcategory[1]
+        })
+
+    categories_with_subcategories = [
+        {
+            "id": category[0],
+            "name": category[1],
+            "subcategories": subcategories_by_category.get(category[0], [])
+        } for category in categories
+    ]
+
+    # Prepare context with all necessary data
     context = {
         'user_id': user_id,
         'nama': user_name,
-        'user_role' : user_role,
-        'link_foto': linkfoto
+        'user_role': user_role,
+        'link_foto': linkfoto,
+        'categories': categories_with_subcategories
     }
-    print(user_name)
+
+    print(user_name)  # Optional: remove or comment this out in production for security
     return render(request, "homepage.html", context)
+
 
 # # @login_required(login_url='/auth')
 # def show_subkategori(request):

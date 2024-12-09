@@ -254,8 +254,11 @@ ORDER BY
     jasa.TglPemesanan DESC;
 
 """
-
+    check_have_testimoni = "SELECT trpj.id FROM sijarta.testimoni t JOIN sijarta.tr_pemesanan_jasa trpj ON t.idTrPemesanan = trpj.id where trpj.idPelanggan = %s"
     pemesanan_data = execute_query(pemesanan_query, [user_id])
+
+    have_testimoni = execute_query(check_have_testimoni, [user_id])[0]
+    print(have_testimoni)
 
     context = {
         'nama': user_name,
@@ -265,7 +268,8 @@ ORDER BY
                        'tanggal_pemesanan': p[1].strftime('%Y-%m-%d'),
                        'total_biaya': f"Rp {p[2]:,.0f}",
                        'status': p[4],
-                       'pemesanan_id': p[0]} for idx, p in enumerate(pemesanan_data)]
+                       'pemesanan_id': p[0],
+                       'ada_testimoni': p[0] in have_testimoni} for idx, p in enumerate(pemesanan_data)]
     }
 
     return render(request, "pemesanan_jasa.html", context)

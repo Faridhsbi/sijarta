@@ -5,6 +5,7 @@ app_name = 'main'
 
 urlpatterns = [
     path('', show_main, name='show_main'),
-    path('subkategori/', show_subkategori, name='show_subkategori'),
+    # path('subkategori/', show_subkategori, name='show_subkategori'),
+    path('subkategori/<uuid:subcategory_id>/', show_subkategori, name='show_subkategori'),
     path('pemesananjasa/', show_pemesananjasa, name='show_pemesananjasa')
 ]

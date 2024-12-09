@@ -33,31 +33,65 @@ def execute_query(query, params=None):
 
 
 # @login_required(login_url='/auth')
+from django.shortcuts import render, redirect
+
 def show_main(request):
     user_id = get_cookie(request, 'user_id')
-    user_role = get_user_role(user_id)
     if not user_id:
         return redirect('/auth/')
+    
+    user_role = get_user_role(user_id)
     user_name = None
     if user_id:
-        query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
-        params = [user_id]
-        result = execute_query(query, params)
-        if result:
-            user_name = result[0][0]
-    
+        # Fetch user's name
+        user_query = "SELECT nama FROM SIJARTA.pengguna WHERE id = %s"
+        user_result = execute_query(user_query, [user_id])
+        if user_result:
+            user_name = user_result[0][0]
+
     linkfoto = ''
     if user_role == 'Pekerja':
-        linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
+        # Fetch photo link for workers
+        foto_query = "SELECT linkfoto FROM sijarta.pekerja WHERE id = %s"
+        foto_result = execute_query(foto_query, [user_id])
+        if foto_result:
+            linkfoto = foto_result[0][0]
 
+    # Fetch categories and their subcategories
+    categories_query = "SELECT id, namakategori FROM sijarta.kategori_jasa"
+    categories = execute_query(categories_query)
+    subcategories_query = "SELECT id, namasubkategori, kategorijasaid FROM sijarta.subkategori_jasa"
+    subcategories = execute_query(subcategories_query)
+
+    # Organize subcategories by their parent category
+    subcategories_by_category = {}
+    for subcategory in subcategories:
+        category_list = subcategories_by_category.setdefault(subcategory[2], [])
+        category_list.append({
+            "id": subcategory[0],
+            "name": subcategory[1]
+        })
+
+    categories_with_subcategories = [
+        {
+            "id": category[0],
+            "name": category[1],
+            "subcategories": subcategories_by_category.get(category[0], [])
+        } for category in categories
+    ]
+
+    # Prepare context with all necessary data
     context = {
         'user_id': user_id,
         'nama': user_name,
-        'user_role' : user_role,
-        'link_foto': linkfoto
+        'user_role': user_role,
+        'link_foto': linkfoto,
+        'categories': categories_with_subcategories
     }
-    print(user_name)
+
+    print(user_name)  # Optional: remove or comment this out in production for security
     return render(request, "homepage.html", context)
+
 
 # # @login_required(login_url='/auth')
 # def show_subkategori(request):
@@ -68,7 +102,7 @@ def show_main(request):
 #         return render(request, "subkategori_pekerja.html", context)
 
 # ini yang baru tar - Daffa
-def show_subkategori(request):
+def show_subkategori(request, subcategory_id):
     user_id = get_cookie(request, 'user_id')  # Ambil user_id dari cookies
     if not user_id:
         return redirect('authentication:login')  # Redirect jika tidak ada user_id
@@ -76,6 +110,38 @@ def show_subkategori(request):
     # ambil name dan role user
     user_name = execute_query("SELECT nama FROM sijarta.pengguna WHERE id=%s", [user_id])[0][0]
     role = get_user_role(user_id)
+
+    # Fetch subcategory details
+    subcategory_details_query = """
+        SELECT namaSubkategori, deskripsi FROM sijarta.subkategori_jasa WHERE id = %s
+    """
+    subcategory_details = execute_query(subcategory_details_query, [subcategory_id])
+
+    # Fetch services offered in this subcategory
+    services_query = """
+        SELECT sesi, harga FROM sijarta.sesi_layanan WHERE subkategoriid = %s
+    """
+    raw_services = execute_query(services_query, [subcategory_id])
+    services = [{'sesi': service[0], 'harga': service[1]} for service in raw_services]
+
+    category_id_query = """
+            SELECT KategoriJasaId
+            FROM sijarta.subkategori_jasa
+            WHERE Id = %s
+        """
+    
+    category_id = execute_query(category_id_query, [subcategory_id])
+
+    # Fetch workers in this subcategory
+    workers_query = """
+            SELECT peng.nama, pekerja.rating, pekerja.linkfoto 
+            FROM sijarta.pengguna AS peng
+            JOIN sijarta.pekerja ON peng.id = pekerja.id
+            JOIN sijarta.pekerja_kategori_jasa AS pkj ON pkj.pekerjaid = pekerja.id
+            WHERE pkj.kategorijasaid = %s
+        """
+    raw_workers = execute_query(workers_query, [category_id][0])
+    workers = [{'nama': worker[0], 'rating': worker[1], 'linkfoto': worker[2]} for worker in raw_workers]
     
     testimoni_all_query = """
         SELECT pelanggan.nama AS Pelanggan, pekerja.nama AS Pekerja, 
@@ -135,11 +201,17 @@ def show_subkategori(request):
     
     context_pelanggan = {'nama': user_name,
                'user_role': role,
-               'testimoni_all': testimoni_with_stars}
+               'testimoni_all': testimoni_with_stars,
+               'subcategory_details': subcategory_details[0] if subcategory_details else (None, None),
+                'services': services,
+                'workers': workers,}
     
     context_pekerja = {'nama': user_name,
                          'user_role': role,
                          'testimoni_all': testimoni_with_stars,
+                         'subcategory_details': subcategory_details[0] if subcategory_details else (None, None),
+                        'services': services,
+                        'workers': workers,
                          'link_foto': linkfoto}
     
     if role == "Pelanggan":
@@ -156,15 +228,32 @@ def show_pemesananjasa(request):
     # ambil name dan role user
     user_name = execute_query("SELECT nama FROM sijarta.pengguna WHERE id=%s", [user_id])[0][0]
     role = get_user_role(user_id)
-    dummy_uuid = str(uuid4()) # buat ngetes testimoni
+    # Fetch data pemesanan
+    pemesanan_query = """
+SELECT jasa.Id AS pemesanan_id, jasa.TglPemesanan, jasa.TotalBiaya, kategori.NamaKategori, status.Status
+FROM sijarta.tr_pemesanan_jasa AS jasa
+JOIN sijarta.kategori_jasa AS kategori ON jasa.IdKategoriJasa = kategori.Id
+JOIN sijarta.tr_pemesanan_status AS tr_status ON jasa.Id = tr_status.IdTrPemesanan
+JOIN sijarta.status_pesanan AS status ON tr_status.IdStatus = status.Id
+WHERE jasa.IdPelanggan = %s
+ORDER BY jasa.TglPemesanan DESC
+"""
 
-    if role != "Pelanggan":
-        return redirect('main:show_main')
-    context = {'nama': user_name,
-               'user_role': role,
-               'pemesanan_id': dummy_uuid}   
+    pemesanan_data = execute_query(pemesanan_query, [user_id])
+    
+    context = {
+        'nama': user_name,
+        'user_role': role,
+        'pemesanan': [{'no': idx + 1,
+                       'nama_layanan': p[3],
+                       'tanggal_pemesanan': p[1].strftime('%Y-%m-%d'),
+                       'total_biaya': f"Rp {p[2]:,.0f}",
+                       'status': p[4],
+                       'pemesanan_id': p[0]} for idx, p in enumerate(pemesanan_data)]
+    }
 
     return render(request, "pemesanan_jasa.html", context)
+
 
 # def create_schema(schema_name):
 #     conn = psycopg2.connect("dbname=your_database user=your_username password=your_password")

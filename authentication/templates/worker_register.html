@@ -76,21 +76,38 @@
     </form>
 
     {% if error %}
-    <div class="flex justify-center items-center mt-6">
-      <div class="text-center text-red-600 font-semibold bg-red-100 border border-red-400 rounded-md p-4 w-full max-w-md">
-        {{ error }}
+      <div id="error-message" class="flex justify-center items-center mt-6">
+        <div class="text-center text-red-600 font-semibold bg-red-100 border border-red-400 rounded-md p-4 w-full max-w-md transition-opacity duration-500" id="error-content">
+          {{ error }}
+        </div>
       </div>
-    </div>
     {% endif %}
 
     <div class="text-center mt-4">
       <p class="text-sm text-black">
         Already have an account?
-        <a href="{% url 'authentication:login' %}" class="font-medium text-[#83B4FF] hover:text-blue-500">
+        <a href="{% url 'authentication:login' %}" class="font-medium text-blue-600 hover:text-blue-500">
           Login here
         </a>
       </p>
     </div>
   </div>
 </div>
+<script>
+  setTimeout(function() {
+    var errorContent = document.getElementById('error-content');
+    if (errorContent) {
+      errorContent.style.opacity = '0'; // Mengubah opacity menjadi 0
+      setTimeout(function() {
+        var errorMessage = document.getElementById('error-message');
+        errorMessage.style.display = 'none'; // Menyembunyikan elemen setelah animasi selesai
+      }, 500); // Waktu yang sama dengan durasi transisi
+    }
+  }, 5000);
+</script>
+<style>
+  #error-content {
+    opacity: 1; 
+  }
+</style>
 {% endblock content %}

@@ -74,7 +74,7 @@ def show_profile_pekerja(request):
     query = "SELECT nama, jeniskelamin, nohp, tgllahir, alamat, saldomypay FROM sijarta.pengguna WHERE id = %s"
     # query = "SELECT * FROM sijarta.pengguna WHERE id = %s"
 
-    query_pekerja = "SELECT npwp, nomorrekening, rating, jmlpesananselesai, linkfoto FROM sijarta.pekerja WHERE id = %s"
+    query_pekerja = "SELECT npwp, nomorrekening, rating, jmlpesananselesai, linkfoto, namabank FROM sijarta.pekerja WHERE id = %s"
     params = [user_id]
 
     result = execute_query(query, params)
@@ -105,6 +105,7 @@ def show_profile_pekerja(request):
         'nomor_rekening' : result2[0][1],
         'rating' : result2[0][2],
         'jml_pesanan_selesai' : result2[0][3],
+        'nama_bank' : result2[0][5],
         'kategori_jasa' : kategori_jasa_list,
         'link_foto' : result2[0][4],
         'user_id' : user_id,

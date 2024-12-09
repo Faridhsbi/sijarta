@@ -102,7 +102,7 @@ def show_main(request):
 #         return render(request, "subkategori_pekerja.html", context)
 
 # ini yang baru tar - Daffa
-def show_subkategori(request):
+def show_subkategori(request, subcategory_id):
     user_id = get_cookie(request, 'user_id')  # Ambil user_id dari cookies
     if not user_id:
         return redirect('authentication:login')  # Redirect jika tidak ada user_id
@@ -110,6 +110,38 @@ def show_subkategori(request):
     # ambil name dan role user
     user_name = execute_query("SELECT nama FROM sijarta.pengguna WHERE id=%s", [user_id])[0][0]
     role = get_user_role(user_id)
+
+    # Fetch subcategory details
+    subcategory_details_query = """
+        SELECT namaSubkategori, deskripsi FROM sijarta.subkategori_jasa WHERE id = %s
+    """
+    subcategory_details = execute_query(subcategory_details_query, [subcategory_id])
+
+    # Fetch services offered in this subcategory
+    services_query = """
+        SELECT sesi, harga FROM sijarta.sesi_layanan WHERE subkategoriid = %s
+    """
+    raw_services = execute_query(services_query, [subcategory_id])
+    services = [{'sesi': service[0], 'harga': service[1]} for service in raw_services]
+
+    category_id_query = """
+            SELECT KategoriJasaId
+            FROM sijarta.subkategori_jasa
+            WHERE Id = %s
+        """
+    
+    category_id = execute_query(category_id_query, [subcategory_id])
+
+    # Fetch workers in this subcategory
+    workers_query = """
+            SELECT peng.nama, pekerja.rating, pekerja.linkfoto 
+            FROM sijarta.pengguna AS peng
+            JOIN sijarta.pekerja ON peng.id = pekerja.id
+            JOIN sijarta.pekerja_kategori_jasa AS pkj ON pkj.pekerjaid = pekerja.id
+            WHERE pkj.kategorijasaid = %s
+        """
+    raw_workers = execute_query(workers_query, [category_id][0])
+    workers = [{'nama': worker[0], 'rating': worker[1], 'linkfoto': worker[2]} for worker in raw_workers]
     
     testimoni_all_query = """
         SELECT pelanggan.nama AS Pelanggan, pekerja.nama AS Pekerja, 
@@ -169,11 +201,17 @@ def show_subkategori(request):
     
     context_pelanggan = {'nama': user_name,
                'user_role': role,
-               'testimoni_all': testimoni_with_stars}
+               'testimoni_all': testimoni_with_stars,
+               'subcategory_details': subcategory_details[0] if subcategory_details else (None, None),
+                'services': services,
+                'workers': workers,}
     
     context_pekerja = {'nama': user_name,
                          'user_role': role,
                          'testimoni_all': testimoni_with_stars,
+                         'subcategory_details': subcategory_details[0] if subcategory_details else (None, None),
+                        'services': services,
+                        'workers': workers,
                          'link_foto': linkfoto}
     
     if role == "Pelanggan":
@@ -190,15 +228,32 @@ def show_pemesananjasa(request):
     # ambil name dan role user
     user_name = execute_query("SELECT nama FROM sijarta.pengguna WHERE id=%s", [user_id])[0][0]
     role = get_user_role(user_id)
-    dummy_uuid = str(uuid4()) # buat ngetes testimoni
+    # Fetch data pemesanan
+    pemesanan_query = """
+SELECT jasa.Id AS pemesanan_id, jasa.TglPemesanan, jasa.TotalBiaya, kategori.NamaKategori, status.Status
+FROM sijarta.tr_pemesanan_jasa AS jasa
+JOIN sijarta.kategori_jasa AS kategori ON jasa.IdKategoriJasa = kategori.Id
+JOIN sijarta.tr_pemesanan_status AS tr_status ON jasa.Id = tr_status.IdTrPemesanan
+JOIN sijarta.status_pesanan AS status ON tr_status.IdStatus = status.Id
+WHERE jasa.IdPelanggan = %s
+ORDER BY jasa.TglPemesanan DESC
+"""
 
-    if role != "Pelanggan":
-        return redirect('main:show_main')
-    context = {'nama': user_name,
-               'user_role': role,
-               'pemesanan_id': dummy_uuid}   
+    pemesanan_data = execute_query(pemesanan_query, [user_id])
+    
+    context = {
+        'nama': user_name,
+        'user_role': role,
+        'pemesanan': [{'no': idx + 1,
+                       'nama_layanan': p[3],
+                       'tanggal_pemesanan': p[1].strftime('%Y-%m-%d'),
+                       'total_biaya': f"Rp {p[2]:,.0f}",
+                       'status': p[4],
+                       'pemesanan_id': p[0]} for idx, p in enumerate(pemesanan_data)]
+    }
 
     return render(request, "pemesanan_jasa.html", context)
+
 
 # def create_schema(schema_name):
 #     conn = psycopg2.connect("dbname=your_database user=your_username password=your_password")

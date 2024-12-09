@@ -113,52 +113,23 @@
 <body>
     <h1 style="text-align: center;">Daftar Pemesanan Jasa</h1>
     <div class="container">
-    <table>
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama Layanan</th>
-                <th>Tanggal Pemesanan</th>
-                <th>Total Biaya</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Layanan Pembersihan</td>
-                <td>2024-11-20</td>
-                <td>Rp 90.000</td>
-                <td>Pesanan Selesai</td>
-                <td><a href="{% url 'testimoni:delete_testimoni' pemesanan_id %}" class="deletetestimonibtn">Hapus Testimoni</a></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Pembersihan Mendalam</td>
-                <td>2024-11-15</td>
-                <td>Rp 180.000</td>
-                <td>Pesanan Selesai</td>
-                <td><a href="{% url 'testimoni:form_testimoni' pemesanan_id %}" class="testimonibtn">Buat Testimoni</a></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Pembersihan Mendalam</td>
-                <td>2024-11-10</td>
-                <td>Rp 180.000</td>
-                <td>Mencari Pekerja Terdekat</td>
-                <td><button class="btn-red">Batalkan</button></td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Layanan Pembersihan</td>
-                <td>2024-11-05</td>
-                <td>Rp 90.000</td>
-                <td>Sedang Diproses</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+        {% for pesanan in pemesanan %}
+        <tr>
+            <td>{{ pesanan.no }}</td>
+            <td>{{ pesanan.nama_layanan }}</td>
+            <td>{{ pesanan.tanggal_pemesanan }}</td>
+            <td>{{ pesanan.total_biaya }}</td>
+            <td>{{ pesanan.status }}</td>
+            <td>
+                {% if pesanan.status == "Pesanan Selesai" %}
+                <a href="{% url 'testimoni:form_testimoni' pesanan.pemesanan_id %}" class="testimonibtn">Buat Testimoni</a>
+                {% elif pesanan.status == "Mencari Pekerja Terdekat" %}
+                <button class="btn-red">Batalkan</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        
     </div>
 </body>
 </div>

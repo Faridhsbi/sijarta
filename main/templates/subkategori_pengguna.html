@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subkategori Jasa - Pengguna</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,7 +73,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            overflow: auto; /* Memastikan modal bisa scroll jika konten terlalu panjang */
+            overflow: auto;
         }
         
         .modal-content {
@@ -79,10 +81,10 @@
             margin: 10% auto;
             padding: 20px;
             border-radius: 8px;
-            width: 50%; /* Pastikan ukuran sesuai */
-            max-height: 80vh; /* Modal maksimal 80% dari tinggi layar */
-            overflow-y: auto; /* Aktifkan scrolling untuk konten berlebih */
-            box-sizing: border-box; /* Hitung padding dalam lebar */
+            width: 50%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-sizing: border-box;
         }
         
         .close {
@@ -123,97 +125,102 @@
         }
 
         .testimonials {
-        width: 90%;
-        margin: 0 auto;
+            width: 90%;
+            margin: 0 auto;
         }
 
-/* Add custom width for the testimonial wrapper */
-.testimonial-wrapper {
-    width: 100%;  /* Ensure full width */
-    max-width: 1200px; /* Optional: Add a max-width */
-    margin: 0 auto; /* Optional: Center the wrapper */
-    padding: 40px 20px; /* Optional: Add padding */
-}
+        .testimonial-wrapper {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
 
-.testimonial-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-}
+        .testimonial-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+        }
 
-.testimonial-item {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    flex: 1 1 calc(33.333% - 20px); /* 3 items per row */
-    box-sizing: border-box;
-}
+        .testimonial-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1 1 calc(33.333% - 20px);
+            box-sizing: border-box;
+        }
 
-@media (max-width: 768px) {
-    .testimonial-item {
-        flex: 1 1 calc(50% - 20px); /* 2 items per row on small screens */
-    }
-}
+        @media (max-width: 768px) {
+            .testimonial-item {
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
 
-@media (max-width: 480px) {
-    .testimonial-item {
-        flex: 1 1 100%; /* 1 item per row on very small screens */
-    }
-}
+        @media (max-width: 480px) {
+            .testimonial-item {
+                flex: 1 1 100%;
+            }
+        }
 
+        .testimonial-item:hover {
+            transform: translateY(-5px);
+        }
 
-.testimonial-item:hover {
-    transform: translateY(-5px);
-}
+        .testimonial-item p {
+            margin: 5px 0;
+        }
 
-.testimonial-item p {
-    margin: 5px 0;
-}
-
-.testimonial-item strong {
-    color: #333;
-}
+        .testimonial-item strong {
+            color: #333;
+        }
     </style>
 </head>
 <body>
-<div class="my-20 container mx-auto px-96 py-8">
-
-    <h1>Cleaning Service</h1>
-    <div class="container">
-        <div class="details">
-            <p><strong>Deskripsi:</strong> Layanan kebersihan rumah dan kantor.</p>
-            <p><strong>Kategori:</strong> Jasa Rumah Tangga</p>
-        </div>
-        
-        <div class="services">
-            <h2>Daftar Sesi Layanan</h2>
-            <div class="service-item">
-                <span>Layanan Pembersihan - Rp 100.000</span>
-                <button onclick="openModal('Layanan Pembersihan', '100000')">Pesan Jasa</button>
-            </div>
-            <div class="service-item">
-                <span>Pembersihan Mendalam - Rp 200.000</span>
-                <button onclick="openModal('Pembersihan Mendalam', '200000')">Pesan Jasa</button>
-            </div>
-        </div>
-
-        <div class="workers">
-            <h2>Daftar Pekerja</h2>
-            <div class="worker-item">
-                <span>Nama Pekerja: Budi</span>
-            </div>
-            <div class="worker-item">
-                <span>Nama Pekerja: Siti</span>
-            </div>
-        </div>
-        
-        
+<div class="container">
+    <h1>{{ subcategory_details.0 }} Services</h1>
+    <div class="details">
+        <p><strong>Deskripsi:</strong> {{ subcategory_details.1 }}</p>
+        <p><strong>Subkategori:</strong> {{ subcategory_details.0 }}</p>
     </div>
-
     
+    <div class="services">
+        <h2>Daftar Sesi Layanan</h2>
+        {% for service in services %}
+        <div class="service-item">
+            <span>{{ service.sesi }} - Rp {{ service.harga }}</span>
+            <button onclick="openModal('{{ service.sesi }}', '{{ service.harga }}')">Pesan Jasa</button>
+        </div>
+        {% endfor %}
+    </div>
     
+    <div class="workers">
+        <h2>Daftar Pekerja</h2>
+        {% for worker in workers %}
+        <div class="worker-item">
+            <span>Nama Pekerja: {{ worker.nama }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="testimonials">
+        <h2>Testimoni</h2>
+        <div class="testimonial-wrapper">
+            <div class="testimonial-grid">
+                {% for testimoni in testimoni_all %}
+                <div class="testimonial-item">
+                    <p><strong>Pengguna:</strong> {{ testimoni.nama_pelanggan }}</p>
+                    <p><strong>Jenis jasa:</strong> {{ testimoni.nama_jasa }}</p>
+                    <p><strong>Tanggal:</strong> {{ testimoni.tanggal }}</p>
+                    <p><strong>Pekerja:</strong> {{ testimoni.nama_pekerja }}</p>
+                    <p><strong>Rating:</strong> {{ testimoni.stars }}</p>
+                    <p>{{ testimoni.review }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
     <!-- Modal -->
     <div id="orderModal" class="modal">
@@ -246,41 +253,20 @@
     </div>
 </div>
 
-<div class="testimonials">
-    <h2>Testimoni</h2>
-    <br/>
-    <div class="testimonial-wrapper">
-        <div class="testimonial-grid">
-            {% for testimoni in testimoni_all %}
-            <div class="testimonial-item">
-                <p><strong>Pengguna:</strong> {{ testimoni.nama_pelanggan }}</p>
-                <p><strong>Jenis jasa:</strong> {{ testimoni.nama_jasa }}</p>
-                <p><strong>Tanggal:</strong> {{ testimoni.tanggal }}</p>
-                <p><strong>Pekerja:</strong> {{ testimoni.nama_pekerja }}</p>
-                <p><strong>Rating:</strong> {{ testimoni.stars }}</p>
-                <p>{{ testimoni.review }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-    
+<script>
+    function openModal(serviceName, servicePrice) {
+        document.getElementById('serviceName').value = serviceName;
+        document.getElementById('servicePrice').value = `Rp ${servicePrice}`;
+        document.getElementById('orderModal').style.display = 'block';
+    }
 
-    <script>
-        function openModal(serviceName, servicePrice) {
-            document.getElementById('serviceName').value = serviceName;
-            document.getElementById('servicePrice').value = `Rp ${servicePrice}`;
-            document.getElementById('orderModal').style.display = 'block';
-        }
+    function redirectToOrders() {
+        window.location.href = "{% url 'main:show_pemesananjasa' %}";
+    }
 
-        function redirectToOrders() {
-            window.location.href = "{% url 'main:show_pemesananjasa' %}";
-        }
-
-        function closeModal() {
-            document.getElementById('orderModal').style.display = 'none';
-        }
-    </script>
+    function closeModal() {
+        document.getElementById('orderModal').style.display = 'none';
+    }
+</script>
 </body>
-
 {% endblock %}

@@ -230,17 +230,33 @@ def show_pemesananjasa(request):
     role = get_user_role(user_id)
     # Fetch data pemesanan
     pemesanan_query = """
-SELECT jasa.Id AS pemesanan_id, jasa.TglPemesanan, jasa.TotalBiaya, kategori.NamaKategori, status.Status
-FROM sijarta.tr_pemesanan_jasa AS jasa
-JOIN sijarta.kategori_jasa AS kategori ON jasa.IdKategoriJasa = kategori.Id
-JOIN sijarta.tr_pemesanan_status AS tr_status ON jasa.Id = tr_status.IdTrPemesanan
-JOIN sijarta.status_pesanan AS status ON tr_status.IdStatus = status.Id
-WHERE jasa.IdPelanggan = %s
-ORDER BY jasa.TglPemesanan DESC
+SELECT 
+    jasa.Id AS pemesanan_id,
+    jasa.TglPemesanan,
+    jasa.TotalBiaya,
+    kategori.NamaKategori,
+    status.Status
+FROM 
+    sijarta.tr_pemesanan_jasa AS jasa
+JOIN 
+    sijarta.sesi_layanan AS sesi ON jasa.IdKategoriJasa = sesi.SubkategoriId AND jasa.Sesi = sesi.Sesi
+JOIN 
+    sijarta.subkategori_jasa AS subkategori ON sesi.SubkategoriId = subkategori.Id
+JOIN 
+    sijarta.kategori_jasa AS kategori ON subkategori.KategoriJasaId = kategori.Id
+JOIN 
+    sijarta.tr_pemesanan_status AS tr_status ON jasa.Id = tr_status.IdTrPemesanan
+JOIN 
+    sijarta.status_pesanan AS status ON tr_status.IdStatus = status.Id
+WHERE 
+    jasa.IdPelanggan = %s
+ORDER BY 
+    jasa.TglPemesanan DESC;
+
 """
 
     pemesanan_data = execute_query(pemesanan_query, [user_id])
-    
+
     context = {
         'nama': user_name,
         'user_role': role,

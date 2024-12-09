@@ -113,24 +113,38 @@
 <body>
     <h1 style="text-align: center;">Daftar Pemesanan Jasa</h1>
     <div class="container">
-        {% for pesanan in pemesanan %}
-        <tr>
-            <td>{{ pesanan.no }}</td>
-            <td>{{ pesanan.nama_layanan }}</td>
-            <td>{{ pesanan.tanggal_pemesanan }}</td>
-            <td>{{ pesanan.total_biaya }}</td>
-            <td>{{ pesanan.status }}</td>
-            <td>
-                {% if pesanan.status == "Pesanan Selesai" %}
-                <a href="{% url 'testimoni:form_testimoni' pesanan.pemesanan_id %}" class="testimonibtn">Buat Testimoni</a>
-                {% elif pesanan.status == "Mencari Pekerja Terdekat" %}
-                <button class="btn-red">Batalkan</button>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Layanan</th>
+                    <th>Tanggal Pemesanan</th>
+                    <th>Total Biaya</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pesanan in pemesanan %}
+                <tr>
+                    <td>{{ pesanan.no }}</td>
+                    <td>{{ pesanan.nama_layanan }}</td>
+                    <td>{{ pesanan.tanggal_pemesanan }}</td>
+                    <td>{{ pesanan.total_biaya }}</td>
+                    <td>{{ pesanan.status }}</td>
+                    <td>
+                        {% if pesanan.status == "Selesai" %}
+                        <a href="{% url 'testimoni:form_testimoni' pesanan.pemesanan_id %}" class="testimonibtn">Buat Testimoni</a>
+                        {% elif pesanan.status == "Mencari Pekerja" %}
+                        <button class="btn-red">Batalkan</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    
 </body>
 </div>
 {% endblock %}

@@ -144,6 +144,10 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">Tidak ada pemesanan jasa ditemukan.</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>

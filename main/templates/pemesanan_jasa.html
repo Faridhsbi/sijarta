@@ -137,6 +137,8 @@
                         <a href="{% url 'testimoni:form_testimoni' pesanan.pemesanan_id %}" class="testimonibtn">Buat Testimoni</a>
                         {% elif pesanan.status == "Mencari Pekerja" %}
                         <button class="btn-red">Batalkan</button>
+                        {% elif pesanan.status == "Menunggu Pembayaran" %}
+                        <button class="btn-red">Batalkan</button>
                         {% endif %}
                     </td>
                 </tr>

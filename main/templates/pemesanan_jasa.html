@@ -113,24 +113,74 @@
 <body>
     <h1 style="text-align: center;">Daftar Pemesanan Jasa</h1>
     <div class="container">
-        {% for pesanan in pemesanan %}
-        <tr>
-            <td>{{ pesanan.no }}</td>
-            <td>{{ pesanan.nama_layanan }}</td>
-            <td>{{ pesanan.tanggal_pemesanan }}</td>
-            <td>{{ pesanan.total_biaya }}</td>
-            <td>{{ pesanan.status }}</td>
-            <td>
-                {% if pesanan.status == "Pesanan Selesai" %}
-                <a href="{% url 'testimoni:form_testimoni' pesanan.pemesanan_id %}" class="testimonibtn">Buat Testimoni</a>
-                {% elif pesanan.status == "Mencari Pekerja Terdekat" %}
-                <button class="btn-red">Batalkan</button>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Layanan</th>
+                    <th>Tanggal Pemesanan</th>
+                    <th>Total Biaya</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pesanan in pemesanan %}
+                <tr>
+                    <td>{{ pesanan.no }}</td>
+                    <td>{{ pesanan.nama_layanan }}</td>
+                    <td>{{ pesanan.tanggal_pemesanan }}</td>
+                    <td>{{ pesanan.total_biaya }}</td>
+                    <td>{{ pesanan.status }}</td>
+                    <td>
+                        {% if pesanan.status == "Selesai" and not pesanan.ada_testimoni %}
+                        <a href="{% url 'testimoni:form_testimoni' pesanan.pemesanan_id %}" class="testimonibtn">Buat Testimoni</a>
+                        {% elif pesanan.status == "Selesai" and pesanan.ada_testimoni %}
+                        <a href="{% url 'testimoni:delete_testimoni' pesanan.pemesanan_id%}" class="deletetestimonibtn"> Hapus Testimoni </a>
+                        {% elif pesanan.status == "Mencari Pekerja" %}
+                        <button class="btn-red">Batalkan</button>
+                        {% elif pesanan.status == "Menunggu Pembayaran" %}
+                        <button class="btn-red" onclick="cancelOrder('{{ pesanan.pemesanan_id }}')">Batalkan</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">Tidak ada pemesanan jasa ditemukan.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    
 </body>
 </div>
+
+<script>
+    function cancelOrder(pemesananId) {
+        if (confirm("Apakah Anda yakin ingin membatalkan pemesanan ini?")) {
+            fetch("{% url 'main:cancel_pemesanan' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ pemesanan_id: pemesananId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Pemesanan berhasil dibatalkan!");
+                    location.reload(); // Refresh halaman untuk menampilkan perubahan
+                } else {
+                    alert("Gagal membatalkan pemesanan: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    }
+</script>
+
 {% endblock %}

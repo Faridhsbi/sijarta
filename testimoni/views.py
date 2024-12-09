@@ -22,11 +22,11 @@ def tambah_testimoni(request, pemesanan_id):
         # Pastikan rating valid
         if rating and teks:
                 # Query untuk menyimpan data testimoni ke database PostgreSQL
-            # execute_query("""
-            #             INSERT INTO TESTIMONI (IdTrPemesanan, Tgl, Teks, Rating)
-            #             VALUES (%s, CURRENT_DATE, %s, %s)""", [pemesanan_id, teks, rating])
+            execute_query("""
+                        INSERT INTO TESTIMONI (IdTrPemesanan, Tgl, Teks, Rating)
+                        VALUES (%s, CURRENT_DATE, %s, %s)""", [pemesanan_id, teks, rating])
 
-            
+            print(rating + " " + teks)
             return redirect('main:show_pemesananjasa')  # Ganti dengan URL yang sesuai
         else:
             error_msg = "Rating dan/atau Komentar tidak boleh kosong"
@@ -49,12 +49,14 @@ def delete_testimoni(request, pemesanan_id):
     if role != "Pelanggan":
         return redirect('main:show_main')
     
+    print("is it here?")
     check_query = "SELECT idPelanggan from sijarta.TR_PEMESANAN_JASA WHERE id=%s"
     check_result = execute_query(check_query, [pemesanan_id])[0][0]
-
-    if user_id != check_result:
+    
+    if user_id != str(check_result):
         return redirect('main:show_pemesananjasa')
     
+    print("did it go here nah?")
     delete_query = "DELETE FROM sijarta.TESTIMONI WHERE IdTrPemesanan=%s"
     execute_query(delete_query, [pemesanan_id])
     print("TEST GOT DELETED IF HERE YES IT DID")

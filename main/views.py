@@ -1,4 +1,7 @@
+from datetime import datetime
+import json
 from uuid import uuid4
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import psycopg2
@@ -89,7 +92,6 @@ def show_main(request):
         'categories': categories_with_subcategories
     }
 
-    print(user_name)  # Optional: remove or comment this out in production for security
     return render(request, "homepage.html", context)
 
 
@@ -165,9 +167,9 @@ def show_subkategori(request, subcategory_id):
         JOIN sijarta.SUBKATEGORI_JASA subkategori_jasa ON pemesanan.IdKategoriJasa = subkategori_jasa.Id
         WHERE pekerja.nama = %s"""
     linkfoto = ''
+    is_joined = ''
     if (role == "Pelanggan"):
         testimoni_all_result = execute_query(testimoni_all_query)
-        print(testimoni_all_result)
         # Add stars for each rating
         testimoni_with_stars = [
         {
@@ -182,7 +184,6 @@ def show_subkategori(request, subcategory_id):
         ]
     else:
         testimoni_pekerja_result = execute_query(testimoni_pekerja_query, [user_name])
-        print(testimoni_pekerja_result)
         linkfoto = execute_query("SELECT linkfoto FROM sijarta.pekerja WHERE id = %s", [user_id])[0][0]
         # Add stars for each rating
         testimoni_with_stars = [
@@ -197,12 +198,22 @@ def show_subkategori(request, subcategory_id):
         for t in testimoni_pekerja_result
         ]
 
+        is_joined_query = """
+        SELECT COUNT(*) 
+        FROM sijarta.pekerja_kategori_jasa
+        WHERE pekerjaid = %s AND kategorijasaid = %s
+        """
+        is_joined_result = execute_query(is_joined_query, [user_id, category_id[0][0]])
+        is_joined = is_joined_result[0][0] > 0  # True jika pekerja sudah bergabung
+
+
     
     
     context_pelanggan = {'nama': user_name,
                'user_role': role,
                'testimoni_all': testimoni_with_stars,
                'subcategory_details': subcategory_details[0] if subcategory_details else (None, None),
+               'subcategoryid' : subcategory_id,
                 'services': services,
                 'workers': workers,}
     
@@ -210,9 +221,11 @@ def show_subkategori(request, subcategory_id):
                          'user_role': role,
                          'testimoni_all': testimoni_with_stars,
                          'subcategory_details': subcategory_details[0] if subcategory_details else (None, None),
+                         'subcategoryid' : subcategory_id,
                         'services': services,
                         'workers': workers,
-                         'link_foto': linkfoto}
+                         'link_foto': linkfoto,
+                         'is_joined': is_joined,}
     
     if role == "Pelanggan":
         return render(request, "subkategori_pengguna.html", context_pelanggan)
@@ -230,17 +243,40 @@ def show_pemesananjasa(request):
     role = get_user_role(user_id)
     # Fetch data pemesanan
     pemesanan_query = """
-SELECT jasa.Id AS pemesanan_id, jasa.TglPemesanan, jasa.TotalBiaya, kategori.NamaKategori, status.Status
-FROM sijarta.tr_pemesanan_jasa AS jasa
-JOIN sijarta.kategori_jasa AS kategori ON jasa.IdKategoriJasa = kategori.Id
-JOIN sijarta.tr_pemesanan_status AS tr_status ON jasa.Id = tr_status.IdTrPemesanan
-JOIN sijarta.status_pesanan AS status ON tr_status.IdStatus = status.Id
-WHERE jasa.IdPelanggan = %s
-ORDER BY jasa.TglPemesanan DESC
-"""
+SELECT 
+    jasa.Id AS pemesanan_id,
+    jasa.TglPemesanan,
+    jasa.TotalBiaya,
+    kategori.NamaKategori,
+    status.Status
+FROM 
+    sijarta.tr_pemesanan_jasa AS jasa
+JOIN 
+    sijarta.sesi_layanan AS sesi ON jasa.IdKategoriJasa = sesi.SubkategoriId AND jasa.Sesi = sesi.Sesi
+JOIN 
+    sijarta.subkategori_jasa AS subkategori ON sesi.SubkategoriId = subkategori.Id
+JOIN 
+    sijarta.kategori_jasa AS kategori ON subkategori.KategoriJasaId = kategori.Id
+JOIN 
+    sijarta.tr_pemesanan_status AS tr_status ON jasa.Id = tr_status.IdTrPemesanan
+JOIN 
+    sijarta.status_pesanan AS status ON tr_status.IdStatus = status.Id
+WHERE 
+    jasa.IdPelanggan = %s
+ORDER BY 
+    jasa.TglPemesanan DESC;
 
+"""
+    check_have_testimoni = "SELECT trpj.id FROM sijarta.testimoni t JOIN sijarta.tr_pemesanan_jasa trpj ON t.idTrPemesanan = trpj.id where trpj.idPelanggan = %s"
     pemesanan_data = execute_query(pemesanan_query, [user_id])
-    
+
+    have_testimoni = []
+    try:
+        have_testimoni = execute_query(check_have_testimoni, [user_id])[0]
+    except:
+        have_testimoni = []
+    print(have_testimoni)
+
     context = {
         'nama': user_name,
         'user_role': role,
@@ -249,10 +285,137 @@ ORDER BY jasa.TglPemesanan DESC
                        'tanggal_pemesanan': p[1].strftime('%Y-%m-%d'),
                        'total_biaya': f"Rp {p[2]:,.0f}",
                        'status': p[4],
-                       'pemesanan_id': p[0]} for idx, p in enumerate(pemesanan_data)]
+                       'pemesanan_id': p[0],
+                       'ada_testimoni': p[0] in have_testimoni} for idx, p in enumerate(pemesanan_data)]
     }
 
     return render(request, "pemesanan_jasa.html", context)
+
+def join_subcategory(request, subcategory_id):
+    user_id = get_cookie(request, 'user_id')  # Ambil user_id dari cookies
+    if not user_id or get_user_role(user_id) != "Pekerja":
+        return redirect('authentication:login')
+
+    category_id_query = """
+        SELECT KategoriJasaId
+        FROM sijarta.subkategori_jasa
+        WHERE Id = %s
+    """
+    category_id = execute_query(category_id_query, [subcategory_id])
+
+    join_query = """
+    INSERT INTO sijarta.pekerja_kategori_jasa (pekerjaid, kategorijasaid)
+    VALUES (%s, %s)
+    """
+    execute_query(join_query, [user_id, category_id[0][0]])
+
+    return redirect('main:show_subkategori', subcategory_id=subcategory_id)
+
+import json
+
+from datetime import datetime
+from django.http import JsonResponse
+from uuid import uuid4
+
+def create_pemesanan(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        print("Received data:", data)
+
+        user_id = get_cookie(request, 'user_id')  # Ambil user_id dari cookies
+        if not user_id:
+            return JsonResponse({"error": "User not logged in"}, status=401)
+        
+        # Ambil data dari request
+        service_name = data.get("service_name")
+        service_price = float(data.get("service_price", 0))
+        order_date = data.get("order_date")
+        discount_code = data.get("discount_code")
+        payment_method = data.get("payment_method")
+        subcategory_id = data.get("subcategory_id")
+        sesi_ke = data.get("sesi")
+
+        print(payment_method)
+
+        payment_method_query = "SELECT Id FROM sijarta.metode_bayar WHERE Nama = %s"
+        payment_method_result = execute_query(payment_method_query, [payment_method])
+        if not payment_method_result:
+            return JsonResponse({"error": "Invalid payment method"}, status=400)
+        payment_method_id = payment_method_result[0][0]
+
+        # Validasi data
+        if not service_name or not order_date or not payment_method:
+            return JsonResponse({"error": "Incomplete data"}, status=400)
+
+        # Hitung total biaya
+        discount_value = 0
+        if discount_code:
+            discount_query = "SELECT Kode, Potongan FROM sijarta.diskon WHERE Kode = %s"
+            discount_result = execute_query(discount_query, [discount_code])
+            if not discount_result:
+                return JsonResponse({"error": "Invalid discount code"}, status=400)
+            discount_id = discount_result[0][0]
+            discount_value = discount_result[0][1]
+        else:
+            discount_id = None
+            discount_value = 0
+
+        total_price = max(0, service_price - discount_value)
+
+        # Buat pemesanan baru
+        pemesanan_id = str(uuid4())
+        insert_pemesanan_query = """
+        INSERT INTO sijarta.tr_pemesanan_jasa (Id, TglPemesanan, TglPekerjaan, WaktuPekerjaan, TotalBiaya, IdPelanggan, IdKategoriJasa, Sesi, IdDiskon, IdMetodeBayar)
+        VALUES (%s, %s, %s, '2h 30m 00s', %s, %s, %s, %s, %s, %s)
+        """
+        execute_query(insert_pemesanan_query, [
+            pemesanan_id,
+            datetime.now().date(),
+            order_date,
+            total_price,
+            user_id,
+            subcategory_id,  # Ambil ID subkategori dari data form
+            sesi_ke,
+            discount_id if discount_id else None,
+            payment_method_id
+        ])
+
+        # Tambahkan status awal "Menunggu Pembayaran"
+        execute_query("SET SEARCH_PATH TO sijarta") 
+
+        status_query = """
+        INSERT INTO tr_pemesanan_status (IdTrPemesanan, IdStatus, TglWaktu)
+        VALUES (%s, (SELECT Id FROM status_pesanan WHERE Status = 'Menunggu Pembayaran'), NOW())
+        """
+        execute_query(status_query, [pemesanan_id])
+
+        print(execute_query("SELECT * FROM tr_pemesanan_status WHERE idStatus=(SELECT Id FROM status_pesanan WHERE Status = 'Menunggu Pembayaran')"))
+
+        return JsonResponse({"success": "Pemesanan berhasil dibuat"})
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+    
+def cancel_pemesanan(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        pemesanan_id = data.get("pemesanan_id")
+
+        if not pemesanan_id:
+            return JsonResponse({"error": "Invalid data"}, status=400)
+
+        # Update status menjadi "Dibatalkan"
+        update_status_query = """
+        UPDATE sijarta.tr_pemesanan_status
+        SET IdStatus = (SELECT Id FROM sijarta.status_pesanan WHERE Status = 'Dibatalkan')
+        WHERE Idtrpemesanan = %s
+        """
+        execute_query(update_status_query, [pemesanan_id])
+
+        return JsonResponse({"success": "Pemesanan berhasil dibatalkan"})
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+
 
 
 # def create_schema(schema_name):

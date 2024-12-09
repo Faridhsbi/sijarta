@@ -227,12 +227,12 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Pemesanan Jasa</h2>
-            <form onsubmit="redirectToOrders(); return false;">
+            <form onsubmit="submitOrder(); return false;">
                 <label for="serviceName">Nama Layanan</label>
-                <input id="serviceName" type="text" readonly>
+                <input id="serviceName" type="text" readonly required>
                 
                 <label for="servicePrice">Harga</label>
-                <input id="servicePrice" type="text" readonly>
+                <input id="servicePrice" type="text" readonly required>
                 
                 <label for="orderDate">Tanggal Pemesanan</label>
                 <input id="orderDate" type="date" required>
@@ -243,22 +243,25 @@
                 <label for="paymentMethod">Metode Pembayaran</label>
                 <select id="paymentMethod" required>
                     <option value="">Pilih metode pembayaran</option>
-                    <option value="mypay">MyPay</option>
-                    <option value="transfer">Transfer Bank</option>
+                    <option value="MyPay">MyPay</option>
+                    <option value="Virtual Account BCA">Transfer Bank</option>
                 </select>
                 
                 <button type="submit">Konfirmasi Pemesanan</button>
             </form>
+            
         </div>
     </div>
 </div>
 
 <script>
-    function openModal(serviceName, servicePrice) {
-        document.getElementById('serviceName').value = serviceName;
+    function openModal(serviceSesi, servicePrice) {
+        document.getElementById('serviceName').value = serviceSesi;
         document.getElementById('servicePrice').value = `Rp ${servicePrice}`;
+        document.getElementById('orderModal').dataset.sesi = serviceSesi; // Simpan sesi di dataset
         document.getElementById('orderModal').style.display = 'block';
     }
+    
 
     function redirectToOrders() {
         window.location.href = "{% url 'main:show_pemesananjasa' %}";
@@ -267,6 +270,47 @@
     function closeModal() {
         document.getElementById('orderModal').style.display = 'none';
     }
+
+    function submitOrder() {
+        const serviceName = document.getElementById('serviceName').value;
+        const servicePrice = document.getElementById('servicePrice').value.replace('Rp ', '').replace(',', '');
+        const orderDate = document.getElementById('orderDate').value;
+        const discountCode = document.getElementById('discountCode').value;
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        const serviceSesi = document.getElementById('orderModal').dataset.sesi; // Ambil sesi dari dataset modal
+    
+        fetch("{% url 'main:create_pemesanan' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                service_name: "{{ subcategory_details.0 }}",
+                service_price: servicePrice,
+                order_date: orderDate,
+                discount_code: discountCode,
+                payment_method: paymentMethod,
+                subcategory_id: "{{ subcategoryid }}",
+                sesi: serviceSesi // Kirim sesi
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Pemesanan berhasil dibuat!");
+                closeModal();
+            } else {
+                alert("Error: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    
+        return false;
+    }
+    
 </script>
 </body>
 {% endblock %}

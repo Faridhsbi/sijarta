@@ -383,7 +383,7 @@ def new_transaction(request):
     sijarta.tr_pemesanan_status tr_status2
     JOIN sijarta.status_pesanan sp ON sp.id = tr_status2.idstatus
     WHERE sp.status = 'Terjadi Kesalahan pada Sistem'
-    OR sp.status = 'Mencari pekerja'
+    OR sp.status = 'Mencari Pekerja'
     OR sp.status = 'Dibatalkan')
     '''
     jasa = execute_query(query_jasa, [user_id])

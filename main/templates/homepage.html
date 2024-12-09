@@ -71,6 +71,12 @@
     </style>
 </head>
 <div class="container mx-auto my-20 px-96 py-8">
+<br>
+{% if request.COOKIES.message %}
+    <div class="alert alert-info">
+        {{ request.COOKIES.message }}
+    </div>
+    {% endif %}
     <h1>Homepage</h1>
     <div class="filter">
         <label for="category-select">Choose a Category:</label>

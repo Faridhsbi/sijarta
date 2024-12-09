@@ -481,6 +481,10 @@ def new_transaction(request):
                 return response
 
             result = execute_query("SELECT id FROM sijarta.pengguna WHERE nohp = %s", [no_hp_tujuan])
+            if result == []:
+                response = redirect('userprofile:new_transaction')
+                response.set_cookie('message', 'Nomor HP tujuan tidak ditemukan.', max_age=5)
+                return response
             user_id_lain = result[0][0]
             # Insert transaction terhadap user lain
             query_insert_transaction = '''

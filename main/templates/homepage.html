@@ -70,34 +70,61 @@
         }
     </style>
 </head>
-<div class="my-20 container mx-auto px-96 py-8">
-<body>
+<div class="container mx-auto my-20 px-96 py-8">
     <h1>Homepage</h1>
-    <div class="container">
-        <div class="filter">
-            <h2>Filter</h2>
-            <form>
-                <label for="category">Pilih Kategori:</label>
-                <select id="category">
-                    <option value="">Semua Kategori</option>
-                    <option value="1">Kategori Jasa 1</option>
-                    <option value="2">Kategori Jasa 2</option>
-                </select>
-                <label for="subcategory">Cari Subkategori:</label>
-                <input id="subcategory" type="text" placeholder="Masukkan nama subkategori">
-                <button type="button">Cari</button>
-            </form>
-        </div>
-
-        <div class="categories">
-            <h2>Kategori Jasa</h2>
-            <div class="category-list">
-                <a href="{% url 'main:show_subkategori' %}">Subkategori Jasa 1</a>
-                <a href="{% url 'main:show_subkategori' %}">Subkategori Jasa 2</a>
-                <a href="{% url 'main:show_subkategori' %}">Subkategori Jasa 3</a>
-            </div>
-        </div>
+    <div class="filter">
+        <label for="category-select">Choose a Category:</label>
+        <select id="category-select" onchange="filterCategories()">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <label for="subcategory-search">Search Subcategory:</label>
+        <input type="text" id="subcategory-search" placeholder="Type to search..." onkeyup="filterSubcategories()">
     </div>
-</body>
+    <div class="categories">
+        <h2>Service Categories</h2>
+        {% for category in categories %}
+        <div class="category" data-category-id="{{ category.id }}">
+            <h3>{{ category.name }}</h3>
+            <ul class="category-list">
+                {% for subcategory in category.subcategories %}
+                <li data-subcategory-name="{{ subcategory.name }}">
+                    <a href="{% url 'main:show_subkategori' subcategory.id %}">{{ subcategory.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% empty %}
+        <p>No categories available.</p>
+        {% endfor %}
+    </div>
 </div>
+
+<script>
+function filterCategories() {
+    var selectedCategory = document.getElementById('category-select').value;
+    var categories = document.querySelectorAll('.category');
+    categories.forEach(function(category) {
+        if (selectedCategory === '' || category.dataset.categoryId === selectedCategory) {
+            category.style.display = 'block';
+        } else {
+            category.style.display = 'none';
+        }
+    });
+}
+
+function filterSubcategories() {
+    var searchText = document.getElementById('subcategory-search').value.toLowerCase();
+    var subcategories = document.querySelectorAll('[data-subcategory-name]');
+    subcategories.forEach(function(subcategory) {
+        if (subcategory.dataset.subcategoryName.toLowerCase().includes(searchText) || searchText === '') {
+            subcategory.style.display = 'list-item';
+        } else {
+            subcategory.style.display = 'none';
+        }
+    });
+}
+</script>
 {% endblock %}
